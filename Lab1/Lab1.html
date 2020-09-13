@@ -78,16 +78,28 @@
       <code>
 
           Serial.printf("Loudest frequency: %d         \n", ui32LoudestFrequency);
-          
+
           if (ui32LoudestFrequency > 4000) {
             digitalWrite(LED_BUILTIN, HIGH);
             }
           else { 
             digitalWrite(LED_BUILTIN, LOW);
             }
-}
 
       </code>
+
+      <br>
+      As you can see in this video, I am charging the battery on the nano while having it respond properly to my pitiful squeaking. <br>
+      <video width="320" height="240" controls>
+      <source src="whistle_light_usb.mp4" type="video/mp4">
+      </video>
+
+      <br>
+      Next, I just checked to make sure it would still work on battery <br>
+      <video width="320" height="240" controls>
+      <source src="whistle_light_batt.mp4" type="video/mp4">
+      </video>
+
     </p>
     <br>
     
