@@ -69,13 +69,15 @@
       </video>
 
       <br>
+      <br>
+      <br>
       Next, it was time to edit the example code given to write a program that would turn the LED on when whistling, and turn off otherwise 
       <br>
       Admittedly I'm a terrible whistler, so it's pretty much just imprecise squeaking. 
       <br>
       Therefore, I simply edited the code by changing one line to turn the light on if the primary frequency was above 4k, which seemed to work well enough in my environment. 
       <br>
-      <code>
+      <code><pre>
 
           Serial.printf("Loudest frequency: %d         \n", ui32LoudestFrequency);
 
@@ -86,7 +88,7 @@
             digitalWrite(LED_BUILTIN, LOW);
             }
 
-      </code>
+      </pre></code>
 
       <br>
       As you can see in this video, I am charging the battery on the nano while having it respond properly to my pitiful squeaking. <br>
@@ -99,6 +101,7 @@
       <video width="320" height="240" controls>
       <source src="whistle_light_batt.mp4" type="video/mp4">
       </video>
+
 
     </p>
     <br>
