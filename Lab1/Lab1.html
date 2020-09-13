@@ -67,7 +67,27 @@
       <video width="320" height="240" controls>
       <source src="lab1_whistle.mp4" type="video/mp4">
       </video>
-      
+
+      <br>
+      Next, it was time to edit the example code given to write a program that would turn the LED on when whistling, and turn off otherwise 
+      <br>
+      Admittedly I'm a terrible whistler, so it's pretty much just imprecise squeaking. 
+      <br>
+      Therefore, I simply edited the code by changing one line to turn the light on if the primary frequency was above 4k, which seemed to work well enough in my environment. 
+      <br>
+      <code>
+
+          Serial.printf("Loudest frequency: %d         \n", ui32LoudestFrequency);
+          
+          if (ui32LoudestFrequency > 4000) {
+            digitalWrite(LED_BUILTIN, HIGH);
+            }
+          else { 
+            digitalWrite(LED_BUILTIN, LOW);
+            }
+}
+
+      </code>
     </p>
     <br>
     
