@@ -129,6 +129,35 @@
       <img src="14bit_rate.PNG" alt="14byte">
       </center>
       <br>
+      The average round trip time was 10.69 ms, and a loss of around 18% based on how many packets were sent and how many were recieved. 
+      <code><pre>
+  if (bytestream_active)
+    {
+
+        res_cmd->command_type = BYTESTREAM_TX;
+        res_cmd->length = 64;
+        //TODO: Put an example of a 32-bit integer and a 64-bit integer
+        //for the stream. Be sure to add a corresponding case in the
+        //python program.
+
+        uint32_t numToSendShort = 15960;
+        uint64_t numToSendLong  = 100000007;
+
+        memcpy(res_cmd->data, &numToSendShort, 4);
+        memcpy(res_cmd->data+4, &numToSendLong, 8);
+
+        
+        //Serial.printf("Stream %d \n", bytestream_active);
+        amdtpsSendData((uint8_t *)res_cmd, 14);
+
+        unsigned long timePassed = micros();
+        
+        Serial.printf("Cycle %d took %d us\n", numByteStreams, timePassed); 
+        numByteStreams += 1;
+        
+    }
+
+      </pre></code>
 
 
 
