@@ -73,20 +73,27 @@
       The Arduino code shows that l_rcvd (length recieved) is the length of what is being sent, so I tracked down the length in main.py. That tracks back to ece4960robot.py, which shows that ping() redirects to __bleak_ping, which sets the length to be PING.Value (1 byte) + 98 zeros, which results in a total of 99 bytes. 
       <br>
       Given an average of .161 seconds per message, this results in around 614 bytes/sec (or 4919 bits/sec). This is round trip time, however, so one side will send at around 10kb/sec. This is about an order of magnitude slower than our baud rate for serial of 115200 symbols/sec, which adds up for wireless communication. 
-
+      <br>
+      <h3>Request Float</h3>
+      Next, I went through the process of requesting a float from the device, which I decided to make pi to 5 digits. 
+      <br>
+      I first started by trying to just write to res_cmd->data directly, but when that errored out on me, I took a look at 
+      <code >case START_BYTESTREAM_TX </code>, which showed that there was a tricky type-conversion format that I was unfamiliar with. Copying that, I added  <code >((float *)(res_cmd->data))[0] = 3.14159f;</code>, and changed TODO_VAL to 1. When I tried that, I got the error that it needed 4 bytes, so I changed the number to 4, but that still didn't work. Then, I learned I needed 1 byte for the length and one for the type, and tried that (6). Still, nothing worked. So I tried the suggestion on campuswire to print the raw value of what I was sending, and realized I forgot to add the command_type. Finally, I added that, et voila. 
 
       <code><pre>
+        case REQ_FLOAT:
+            Serial.println("Going to send a float");
 
-          Serial.printf("Loudest frequency: %d         \n", ui32LoudestFrequency);
-
-          if (ui32LoudestFrequency > 4000) {
-            digitalWrite(LED_BUILTIN, HIGH);
-            }
-          else { 
-            digitalWrite(LED_BUILTIN, LOW);
-            }
+            res_cmd->command_type = GIVE_FLOAT;
+            res_cmd->length = 8; 
+            ((float *)(res_cmd->data))[0] = 3.14159f;
+            
+            amdtpsSendData((uint8_t *)res_cmd, 6);
+            
+            break;
 
       </pre></code>
+      
 
 
     </p>
