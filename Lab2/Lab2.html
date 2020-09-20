@@ -78,7 +78,20 @@
       Next, I went through the process of requesting a float from the device, which I decided to make pi to 5 digits. 
       <br>
       I first started by trying to just write to res_cmd->data directly, but when that errored out on me, I took a look at 
-      <code >case START_BYTESTREAM_TX </code>, which showed that there was a tricky type-conversion format that I was unfamiliar with. Copying that, I added  <code >((float *)(res_cmd->data))[0] = 3.14159f;</code>, and changed TODO_VAL to 1. When I tried that, I got the error that it needed 4 bytes, so I changed the number to 4, but that still didn't work. Then, I learned I needed 1 byte for the length and one for the type, and tried that (6). Still, nothing worked. So I tried the suggestion on campuswire to print the raw value of what I was sending, and realized I forgot to add the command_type. Finally, I added that, et voila. 
+      <code >case START_BYTESTREAM_TX </code>, which showed that there was a tricky type-conversion format that I was unfamiliar with. Copying that, I added  <code >((float *)(res_cmd->data))[0] = 3.14159f;</code>, and changed TODO_VAL to 1. When I tried that, I got the error that it needed 4 bytes, so I changed the number to 4, but that still didn't work. 
+      <center>
+      <img src="error_length.PNG" alt="ping rate">
+      </center>
+
+      Then, I learned I needed 1 byte for the length and one for the type, and tried that (6). Still, nothing worked. So I tried the suggestion on campuswire to print the raw value of what I was sending, and realized I forgot to add the command_type. 
+      <center>
+      <img src="error_4bytes.PNG" alt="ping rate">
+      </center>
+      Finally, I added that, et voila. 
+
+      <center>
+      <img src="correctfloat.PNG" alt="ping rate">
+      </center>
 
       <code><pre>
         case REQ_FLOAT:
@@ -93,7 +106,7 @@
             break;
 
       </pre></code>
-      
+
 
 
     </p>
