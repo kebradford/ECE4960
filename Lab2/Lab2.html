@@ -7,7 +7,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title> Lab 1</title>
+    <title> Lab 2</title>
     <style>
       body{
         padding: 0 80px;}
@@ -24,7 +24,7 @@
     <br>
     <center><h2>Objective </h2></center>
     
-      <p>The goal of this lab was to run Bluetooth between the artemis board and the computer</p>
+      <p>Run Bluetooth between the artemis board and the computer</p>
       <br>
     <br>
     <center><h2>Materials Used</h2></center>
@@ -47,9 +47,9 @@
       Next, I uploaded the code to the Artemis board from the Arduino IDE, confirming that the blue LED blinked and the serial monitor printed the requisite information
 
       <br>
-      Next, because I read campuswire and remembered that this was a thing with VMs, I ensured I could use USB devices in the VM by enabling them in the settings of the VirtualBox manager
+      Next, I ensured I could use USB devices in the VM by enabling them in VirtualBox manager
       <br>
-      Now, things got a little less clean. After first running main.py in the VM, I got bleak errors. Then, after just running a few more times, I got bluetooth adapter not found issues. After some headscratching and good-ole ECE turning it off and turning it back on again, I found that I had to reconnect the bluetooth module after the VM was already running, else it would not be found. Curious, as this was not the case for the Nano, but the problem was "solved". It finally found my device! I added the robot's address to settings.py as well to speed up the process in the future. 
+       After first running main.py in the VM, I got bleak errors. Then, I got bluetooth adapter not found issues. After some headscratching and good-ole ECE turning it off and turning it back on again, I found that I had to reconnect the bluetooth module after the VM was already running, else it would not be found. It finally found my device! I added the robot's address to settings.py as well to speed up the process in the future. 
 
       <br>
       <h3>Ping Robot</h3>
@@ -70,7 +70,7 @@
       However, the average ping rate was around 161ms with a standard deviation of 41ms 
       <br>
       <br>
-      The Arduino code shows that l_rcvd (length recieved) is the length of what is being sent, so I tracked down the length in main.py. That tracks back to ece4960robot.py, which shows that ping() redirects to __bleak_ping, which sets the length to be PING.Value (1 byte) + 98 zeros, which results in a total of 99 bytes. 
+      The packet size is defined in __bleak_ping, which length to PING.Value (1 byte) + 98 zeros; a total of 99 bytes. 
       <br>
       Given an average of .161 seconds per message, this results in around 614 bytes/sec (or 4919 bits/sec). This is round trip time, however, so one side will send at around 10kb/sec. This is about an order of magnitude slower than our baud rate for serial of 115200 symbols/sec, which adds up for wireless communication. 
       <br>
