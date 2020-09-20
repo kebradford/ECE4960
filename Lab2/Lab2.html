@@ -67,7 +67,12 @@
       <img src="pingratetime.PNG" alt="ping rate">
       </center>
       <br>
-
+      However, the average ping rate was around 161ms with a standard deviation of 41ms 
+      <br>
+      <br>
+      The Arduino code shows that l_rcvd (length recieved) is the length of what is being sent, so I tracked down the length in main.py. That tracks back to ece4960robot.py, which shows that ping() redirects to __bleak_ping, which sets the length to be PING.Value (1 byte) + 98 zeros, which results in a total of 99 bytes. 
+      <br>
+      Given an average of .161 seconds per message, this results in around 614 bytes/sec (or 4919 bits/sec). This is round trip time, however, so one side will send at around 10kb/sec. This is about an order of magnitude slower than our baud rate for serial of 115200 symbols/sec, which adds up for wireless communication. 
 
 
       <code><pre>
