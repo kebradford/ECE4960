@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title> Lab 1</title>
+    <style>
+      body{
+        padding: 0 80px;}
+    </style>
+</head>
+  <body>
+    <div id= "header">
+      <center><h1> Lab 2 - Bluetooth</h1></center>
+    </div>
+    <div id = "navbar">
+      <a href="https://kebradford.github.io/ECE4960"><button class="btn"><i class="fa fa-home"></i> Back to Home Page</button></a>
+    </div>
+    <br>
+    <br>
+    <center><h2>Objective </h2></center>
+    
+      <p>The goal of this lab was to run Bluetooth between the artemis board and the computer</p>
+      <br>
+    <br>
+    <center><h2>Materials Used</h2></center>
+       <ul>
+         <li>1 Artemis Nano</li>
+         <li>1 USB A/C Cable</li>
+         <li>1 Bluetooth USB Adapter</li>
+         
+       </ul>
+    <br>
+    <br>
+    <center><h2>Procedure</h2></center>
+    <p>
+      To start with I downloaded the source code found on the course website 
+      <a href="https://cei-lab.github.io/ECE4960/Lab2.html">here</a>, which had all the relevant python and c code.
+      
+      <br>
+      I also plugged in the usb to bluetooth adapter we were given in our kits, and reran the commands to install bleak. 
+      <br>
+      Next, I uploaded the code to the Artemis board from the Arduino IDE, confirming that the blue LED blinked and the serial monitor printed the requisite information
+
+      <br>
+      Next, because I read campuswire and remembered that this was a thing with VMs, I ensured I could use USB devices in the VM by enabling them in the settings of the VirtualBox manager
+      <br>
+      Now, things got a little less clean. After first running main.py in the VM, I got bleak errors. Then, after just running a few more times, I got bluetooth adapter not found issues. After some headscratching and good-ole ECE turning it off and turning it back on again, I found that I had to reconnect the bluetooth module after the VM was already running, else it would not be found. Curious, as this was not the case for the Nano, but the problem was "solved". It finally found my device! I added the robot's address to settings.py as well to speed up the process in the future. 
+
+      <br>
+      <h3>Ping Robot</h3>
+      Now I moved on to the Ping Robot stage. 
+      I simply edited the myRobotTasks() code to run <code>await theRobot.ping()</code>
+      <br>
+      The pinging worked right off the bat, and I was able to collect data on the round trip time, shown below in these two histograms 
+      <br>
+      <center>
+      <img src="pingratehistogram" alt="ping rate">
+      </center>
+      <br>
+      Oddly enough, the ping rate went down after a short period of time, shown below 
+      <center>
+      <img src="pingratetime" alt="ping rate">
+      </center>
+      <br>
+
+
+
+      <code><pre>
+
+          Serial.printf("Loudest frequency: %d         \n", ui32LoudestFrequency);
+
+          if (ui32LoudestFrequency > 4000) {
+            digitalWrite(LED_BUILTIN, HIGH);
+            }
+          else { 
+            digitalWrite(LED_BUILTIN, LOW);
+            }
+
+      </pre></code>
+
+
+    </p>
+    <br>
+    
+  
+ 
+   <a href="#header"><button class="btn"><i class="fa fa-arrow-up"></i>Return to top</button></a>
+   </body>
+</html>
