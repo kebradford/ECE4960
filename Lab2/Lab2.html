@@ -108,6 +108,27 @@
       </pre></code>
 
       <br>
+      <h3>Testing the Data Rate</h3>
+      Last but *certainly* not least was testing the data rate 
+      <br>
+      At first, I tried just setting <code>bytestream_active = true;</code> in <code>case START_BYTESTREAM_TX:</code> and adding a 32 bit value to the amdtpsSendData function, setting the length to 6, and setting command_type to BYTESTREAM_TX. I was getting errors about the having bad chars. 
+      <br>
+      Next, I tried adding <code>bytestream_active = false;</code> after it had sent once, and actually looking at the raw output again. 
+      <br>
+      I ended up adding <code>await theRobot.sendCommand(Commands.REQ_FLOAT)</code> instead of using <code>await theRobot.testByteStream(25) </code>, because I wasn't entirely sure what was going on there, and using the memcpy() function suggested on campuswire. Finally, I was not getting any errors. 
+      <br>
+      Next, I added the unpacking function to that case. I looked at the GIVE_FLOAT example for reference, which used the unpack() function and left-carrot f, which was unfamiliar to me. Googling it led me to <a href=" https://docs.python.org/2/library/struct.html">this documenation for structs</a>, showing me how to properly unpack the structs for different sizes. 
+      <br>
+      Once I did that, and used the right sizes, I was able to send a 32 bit integer via this function! <br>
+      <center>
+      <img src="32bit_num.PNG" alt="32bit num">
+      </center>
+      <br>
+      I tested it with both a 32bit and 64 bit integer with these results. <br>
+      <center>
+      <img src="14bit_rate.PNG" alt="14byte">
+      </center>
+      <br>
 
 
 
