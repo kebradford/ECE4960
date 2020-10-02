@@ -72,14 +72,253 @@
 
       <br>
       <code><pre>
-        
-        myMotorDriver.setDrive( 1, 1, 70); 
-        myMotorDriver.setDrive( 0, 0, 70); 
+
+        myMotorDriver.setDrive( 1, 1, 50); 
+        myMotorDriver.setDrive( 0, 0, 50); 
 
       </pre></code>
 
       <br>
 
+      Next, for fun, I decided to see if the robot would respond in open-loop fashion only when it heard my (sad) whistle by combining elements of Lab1. I mainly just ported over the motor code into my lab1 code, with some fiddling with libraries. I was getting some errors about library mismatches, so I selectively commented out libraries until it stopped throwing errors (arduino.h was the culprit)
+
+      <br>
+      <code><pre>
+
+
+#include <arm_math.h>
+//#include <Arduino.h>
+#include <stdint.h>
+#include "SCMD.h"
+#include "SCMD_config.h" //Contains #defines for common SCMD register names and values
+#include "Wire.h"
+
+//Global variables needed for PDM library
+#define pdmDataBufferSize 4096 //Default is array of 4096 * 32bit
+uint16_t pdmDataBuffer[pdmDataBufferSize];
+
+//Global variables needed for the FFT in this sketch
+float g_fPDMTimeDomain[pdmDataBufferSize * 2];
+float g_fPDMFrequencyDomain[pdmDataBufferSize * 2];
+float g_fPDMMagnitudes[pdmDataBufferSize * 2];
+uint32_t sampleFreq;
+
+//Enable these defines for additional debug printing
+#define PRINT_PDM_DATA 0
+#define PRINT_FFT_DATA 0
+
+#include <PDM.h> //Include PDM library included with the Aruino_Apollo3 core
+AP3_PDM myPDM;   //Create instance of PDM class
+
+//Math library needed for FFT
+#define ARM_MATH_CM4
+
+SCMD myMotorDriver;
+
+void setup()
+{
+  Serial.begin(115200);
+  Serial.println("SparkFun PDM Example");
+  pinMode(LED_BUILTIN, OUTPUT);
+
+
+  ///motor driver stuff 
+    myMotorDriver.settings.commInterface = I2C_MODE;
+    myMotorDriver.settings.I2CAddress = 0x5D;
+    while ( myMotorDriver.begin() != 0xA9 ) //Wait until a valid ID word is returned
+  {
+    Serial.println( "ID mismatch, trying again" );
+    delay(500);
+  }
+  while ( myMotorDriver.ready() == false );
+  while ( myMotorDriver.busy() );
+  myMotorDriver.enable();
+  
+
+  ///////////////////
+  if (myPDM.begin() == false) // Turn on PDM with default settings, start interrupts
+  {
+    Serial.println("PDM Init failed. Are you sure these pins are PDM capable?");
+    while (1)
+      ;
+  }
+  Serial.println("PDM Initialized");
+
+  printPDMConfig();
+}
+
+void loop()
+{
+  if (myPDM.available())
+  {
+    myPDM.getData(pdmDataBuffer, pdmDataBufferSize);
+
+    printLoudest();
+    Serial.println("next check");
+  }
+
+  // Go to Deep Sleep until the PDM ISR or other ISR wakes us.
+  am_hal_sysctrl_sleep(AM_HAL_SYSCTRL_SLEEP_DEEP);
+}
+
+//*****************************************************************************
+//
+// Analyze and print frequency data.
+//
+//*****************************************************************************
+void printLoudest(void)
+{
+  float fMaxValue;
+  uint32_t ui32MaxIndex;
+  int16_t *pi16PDMData = (int16_t *)pdmDataBuffer;
+  uint32_t ui32LoudestFrequency;
+
+  //
+  // Convert the PDM samples to floats, and arrange them in the format
+  // required by the FFT function.
+  //
+  for (uint32_t i = 0; i < pdmDataBufferSize; i++)
+  {
+    if (PRINT_PDM_DATA)
+    {
+      Serial.printf("%d\n", pi16PDMData[i]);
+
+    }
+
+    g_fPDMTimeDomain[2 * i] = pi16PDMData[i] / 1.0;
+    g_fPDMTimeDomain[2 * i + 1] = 0.0;
+  }
+
+  if (PRINT_PDM_DATA)
+  {
+    Serial.printf("END\n");
+  }
+
+  //
+  // Perform the FFT.
+  //
+  arm_cfft_radix4_instance_f32 S;
+  arm_cfft_radix4_init_f32(&S, pdmDataBufferSize, 0, 1);
+  arm_cfft_radix4_f32(&S, g_fPDMTimeDomain);
+  arm_cmplx_mag_f32(g_fPDMTimeDomain, g_fPDMMagnitudes, pdmDataBufferSize);
+
+  if (PRINT_FFT_DATA)
+  {
+    for (uint32_t i = 0; i < pdmDataBufferSize / 2; i++)
+    {
+      Serial.printf("%f\n", g_fPDMMagnitudes[i]);
+    }
+
+    Serial.printf("END\n");
+  }
+
+  //
+  // Find the frequency bin with the largest magnitude.
+  //
+  arm_max_f32(g_fPDMMagnitudes, pdmDataBufferSize / 2, &fMaxValue, &ui32MaxIndex);
+
+  ui32LoudestFrequency = (sampleFreq * ui32MaxIndex) / pdmDataBufferSize;
+
+  if (PRINT_FFT_DATA)
+  {
+    Serial.printf("Loudest frequency bin: %d\n", ui32MaxIndex);
+
+      
+  }
+
+  Serial.printf("Loudest frequency: %d         \n", ui32LoudestFrequency);
+      if (ui32LoudestFrequency > 4000) {
+        digitalWrite(LED_BUILTIN, HIGH);
+        myMotorDriver.setDrive( 1, 1, 70); 
+        myMotorDriver.setDrive( 0, 0, 70); 
+        //delay(250);
+      }
+      else { 
+        digitalWrite(LED_BUILTIN, LOW);
+        myMotorDriver.setDrive( 1, 1, 0); 
+        myMotorDriver.setDrive( 0, 0, 0); 
+        //delay(250);
+      }
+}
+
+//*****************************************************************************
+// Print PDM configuration data.
+***************************************************************************
+void printPDMConfig(void)
+{
+  uint32_t PDMClk;
+  uint32_t MClkDiv;
+  float frequencyUnits;
+
+  //
+  // Read the config structure to figure out what our internal clock is set
+  // to.
+  //
+  switch (myPDM.getClockDivider())
+  {
+  case AM_HAL_PDM_MCLKDIV_4:
+    MClkDiv = 4;
+    break;
+  case AM_HAL_PDM_MCLKDIV_3:
+    MClkDiv = 3;
+    break;
+  case AM_HAL_PDM_MCLKDIV_2:
+    MClkDiv = 2;
+    break;
+  case AM_HAL_PDM_MCLKDIV_1:
+    MClkDiv = 1;
+    break;
+
+  default:
+    MClkDiv = 0;
+  }
+
+  switch (myPDM.getClockSpeed())
+  {
+  case AM_HAL_PDM_CLK_12MHZ:
+    PDMClk = 12000000;
+    break;
+  case AM_HAL_PDM_CLK_6MHZ:
+    PDMClk = 6000000;
+    break;
+  case AM_HAL_PDM_CLK_3MHZ:
+    PDMClk = 3000000;
+    break;
+  case AM_HAL_PDM_CLK_1_5MHZ:
+    PDMClk = 1500000;
+    break;
+  case AM_HAL_PDM_CLK_750KHZ:
+    PDMClk = 750000;
+    break;
+  case AM_HAL_PDM_CLK_375KHZ:
+    PDMClk = 375000;
+    break;
+  case AM_HAL_PDM_CLK_187KHZ:
+    PDMClk = 187000;
+    break;
+
+  default:
+    PDMClk = 0;
+  }
+
+  // Record the effective sample frequency. We'll need it later to print the
+  // loudest frequency from the sample.
+
+  sampleFreq = (PDMClk / (MClkDiv * 2 * myPDM.getDecimationRate()));
+
+  frequencyUnits = (float)sampleFreq / (float)pdmDataBufferSize;
+
+}
+        
+
+      </pre></code>
+
+      <br>
+      <br>
+      <video width="320" height="240" controls>
+      <source src="whistle_run.mp4" type="video/mp4">
+      </video>
+      <br>
 
 
 
