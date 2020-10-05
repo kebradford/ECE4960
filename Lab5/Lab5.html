@@ -114,6 +114,24 @@
       As seen in the video, the robot gets very very close, almost touching the wall at one point, before it deflects, not resulting in a collision. 
       In order to minimize crashes we could move slower, take measurements of wall distance more often, or set a larger distance required between the robot and an obstacle, which would work well in a  low-obstacle environment. 
 
+      <code><pre>
+      def perform_obstacle_avoidance(robot):
+        while True: 
+
+          robot.set_vel(0, 0)
+
+          if (robot.get_laser_data() < .7): 
+            robot.set_vel(0,2)
+            time.sleep(.4)
+
+          else: 
+            robot.set_vel(.5, 0)
+            time.sleep(.1)
+
+      perform_obstacle_avoidance(robot)
+
+      </pre></code>
+
 
     </p>
     <br>
