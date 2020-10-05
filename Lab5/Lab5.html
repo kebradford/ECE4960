@@ -80,10 +80,16 @@
       <br><br> 
       <h4>Time of Flight Sensor</h4>
       <br><br>
+      First, I hooked up the TOF sensor to the Artemis and scanned the i2c bus, finding the address as expected. 
 
       <br>
       <img src="i2c2.PNG" alt="i2c2" width="320" height="240">
       <br>
+      Then, I loaded up the example code to read some data points, and noticed that really close to the sensor, the readings would zero out far before I was actually at the sensor. Therefore, I ran the calibration code with the grey target 5 times, getting offsets of 30, 31, 33, 29, and 31 mm respectively. Therefore, I chose an offset of 31mm. This worked a lot better after again testing with the sensor code. 
+      <br><br>
+
+      
+
 
 
       <br><br>
