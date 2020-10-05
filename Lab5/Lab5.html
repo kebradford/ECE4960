@@ -49,11 +49,28 @@
       First, in order to perform obstacle avoidance on the physical robot, I had to parameterize the two sensors: the proximity sensor and the TOF sensor. 
       <br><br>
       <h5>Proximity Sensor</h5>
+
       <br><br>
       The proximity sensor used was the SparkFun VCNL4040 Proximity Sensor. First, I set up the Arduino library, hooked up the sensor via Qwicc connect to the Artemis Nano, and used the example Wire.c to scan the i2c bus for the sensor. 
       <br>
       <img src="i2c1.PNG" alt="i2c1" width="320" height="240">
       <br>
+
+      After that, I used the example code in the library AllReadings to map the sensor readings to actual distances. I used 4 objects: 
+      <ul>
+         <li>1 Brown Box</li>
+         <li>1 Box with White Paper taped to it</li>
+         <li>1 red Sparkfun box</li>
+         <li>1 black PCB </li>
+       </ul>
+
+       Noteably, these objects were different colors but also different sizes. The white and brown objects were much larger than the red and brown, and therefore likely blocked out more light. I took measurements with the sensors at several distances to collect meaningful data about the values the sensor would report. 
+
+      <br>
+      <img src="ambient_light" alt="ambient_light" width="320" height="240"><img src="white_level" alt="white_level" width="320" height="240">
+      <br>
+
+
 
 
       <br><br>
