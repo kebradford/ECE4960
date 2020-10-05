@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Lab 4</title>
+    <style>
+      body{
+        padding: 0 80px;}
+    </style>
+</head>
+  <body>
+    <div id= "header">
+      <center><h1> Lab 4 - Open Loop Control</h1></center>
+    </div>
+    <div id = "navbar">
+      <a href="https://kebradford.github.io/ECE4960"><button class="btn"><i class="fa fa-home"></i> Back to Home Page</button></a>
+    </div>
+    <br>
+    <br>
+    <center><h2>Objective </h2></center>
+    
+      <p>Get the motors running on the robot with our motor controller, simulate in a virtual environment</p>
+      <br>
+    <br>
+    <center><h2>Materials Used</h2></center>
+       <ul>
+         <li>1 RC Car</li>
+         <li>1 Artemis Nano</li>
+         <li>1 USB A/C Cable</li>
+         <li>2 batteries (car battery, board battery)</li>
+         <li>1 Sparkfun motor driver</li>
+         <li>1 Qwiic connector</li>
+         <li>2 screwdrivers (flathead and phillips)</li>
+         <li>1 wire stripper/cutter</li>
+       </ul>
+    <br>
+    <br>
+    <center><h2>Procedure</h2></center>
+    <p>
+      <h3>4A: Open Loop Control (Real)</h3>
+      <br>
+      First, I connected the Artemis board to the supplied motor driver board using a Qwiic cable 
+      <br><br>
+      Next, I loaded up the software example "Example1_wire" to scan the i2c bus for a component, and found it at 0x5D.
+      <br>
+      <img src="i2c.PNG" alt="i2c">
+      <br>
+      Next, I took apart the RC car by unscrewing the top, disconnecting the control PCB, and cutting all the leads off that. 
+      <br><br>
+      I stripped the DC motor connector wires and screwed them into the motor controller terminals, and did the same for the battery connector. I did have to do some "refactoring" of the hot glue with a heat gun so the DC motor cables didn't rip off. 
+      <br>
+      <img src="connections.jpg" alt="connections" width="320" height="240">
+      <br>
+      Next, I plugged the battery in, installed the SCMD library in Arduino, and pulled up the MotorTest script. I had to change the code a bit, first by adding the correct i2c address as found above, and then by setting i=2 for the number of motors.  They both ran from this script as shown below 
+      <br>
+      <video width="320" height="240" controls>
+      <source src="spinnybois.mp4" type="video/mp4">
+      </video>
+      <br>
+      The next step was to ensure both wheels were spinning at approximately the same speed and get the robot moving independently, in open-loop form, in a straight line. I did this by first setting the two motors to the same forward linear speed and seeing the difference in how fast the two motors spun. 
+      Actually, they ended up spinning at pretty much the same speed when I had them on the floor, so I didn't need to adjust them. Here they are set to level "50" out of 255, which was the lowest I could go and get feedback from them. As you can see, the robot travels in a straight line for quite some time. 
+      <br>
+      <video width="320" height="240" controls>
+      <source src="straightLine.mp4" type="video/mp4">
+      </video>
+      <br>
+
+      <br>
+      <code><pre>
+
+        myMotorDriver.setDrive( 1, 1, 50); 
+        myMotorDriver.setDrive( 0, 0, 50); 
+
+      </pre></code>
+
+      <br>
+
+      Next, for fun, I decided to see if the robot would respond in open-loop fashion only when it heard my (sad) whistle by combining elements of Lab1. I mainly just ported over the motor code into my lab1 code, with some fiddling with libraries. I was getting some errors about library mismatches, so I selectively commented out libraries until it stopped throwing errors (arduino.h was the culprit)
+
+      <br>
+      <code><pre>
+
+      Serial.printf("Loudest frequency: %d         \n", ui32LoudestFrequency);
+      if (ui32LoudestFrequency > 4000) {
+        digitalWrite(LED_BUILTIN, HIGH);
+        myMotorDriver.setDrive( 1, 1, 70); 
+        myMotorDriver.setDrive( 0, 0, 70); 
+        //delay(250);
+      }
+      else { 
+        digitalWrite(LED_BUILTIN, LOW);
+        myMotorDriver.setDrive( 1, 1, 0); 
+        myMotorDriver.setDrive( 0, 0, 0); 
+        //delay(250);
+      }
+   
+
+      </pre></code>
+
+      <br>
+      <br>
+      <video width="320" height="240" controls>
+      <source src="whistle_run.mp4" type="video/mp4">
+      </video>
+
+      <br>
+      And some turns for fun! 
+      <video width="320" height="240" controls>
+      <source src="turn_robot.mp4" type="video/mp4">
+      </video>
+      <br>
+
+
+
+
+
+      <h3>4A: Open Loop Control (Simulated)</h3>
+      <br>
+      Next, I set up the lab4 simulator the same way I did in lab 3, and started up jupyter labs in a terminal, which brought me to the lab4 jupyter notebook. 
+      <br>
+      Reading through, I saw it gave examples of both how to get the position of the robot and how to change the linear and angular velocity. At first I was going to use the known position to calculate when I should turn in a square, but open loop control by definition does not use feedback like that 
+      <br>
+      Therefore, I decided to instead play around with different values for linear/angular velocity and sleep times to make the robot move in a straight line, stop, turn ~90 degrees, and repeat four times. Here's the code as well as a video of that running in the simulation
+      <br>
+      <img src="squareCode.PNG" alt="connections" width="320" height="240">
+      <br>
+      <br>
+      <video width="320" height="240" controls>
+      <source src="square_loop.mp4" type="video/mp4">
+      </video>
+      <br>
+
+
+    </p>
+    <br>
+    
+  
+ 
+   <a href="#header"><button class="btn"><i class="fa fa-arrow-up"></i>Return to top</button></a>
+   </body>
+</html>
