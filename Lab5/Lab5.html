@@ -88,19 +88,31 @@
       Then, I loaded up the example code to read some data points, and noticed that really close to the sensor, the readings would zero out far before I was actually at the sensor. Therefore, I ran the calibration code with the grey target 5 times, getting offsets of 30, 31, 33, 29, and 31 mm respectively. Therefore, I chose an offset of 31mm. This worked a lot better after again testing with the sensor code. 
       <br><br>
 
-      
+
 
 
 
       <br><br>
       <h3>5B: Obstacle Avoidance in Simulation</h3>
       <br><br>
-
+      In the VM, I ran the lab5 set up code then opened the simulator and jupyter notebook as described in the lab manual. To do obstacle avoidance, I had to use the laser range finder data mounted to the front of the virtual robot. 
+      <br>
+      Using a simple if/else loop, I measured whether there was a wall in front of the robot, starting with an offset of .5. If there was a wall, I would stop and turn the robot for .1s. If not, I would set a positive velocity for .1 seconds. 
+      <br>
+      After testing this, I found that the major issue occurred when the robot was moving not directly at a wall but not perfectly parallel. The laser range finder had a rather narrow beam, so if a wall was around 10 degrees out of parallel with the robot, the robot would not see it but would crash into it. 
+      <br>
+      In order to address this issue, I increased the distance at which the robot would determine there was a wall in front of it to .7. Essentially, then the robot could measure a hypotenuse rather than the direct perpendicular distance to the wall. This meant the robot couldn't get as close to the wall, but it heavily reduced the number of collisions. 
       <br>
       <video width="320" height="240" controls>
       <source src="obstacle_avoidance.mp4" type="video/mp4">
       </video>
       <br>
+      I continued tweaking the values for how long the robot should delay and how long it should turn for, and at what speeds. I found a combination of moving at .5 linear velocity for movement and 2 angular velocity for turns to be the best balance of speed to obstacle avoidance. In reality, I hope that the robot can glance off surfaces at a low enough angle without causing it to stop or flip, although this would not be ideal. 
+      There is a delay of .1s between updates of this function, which will be adjusted as other functions need to occur between measurements. Once the robot is performing other tasks, those other tasks will take some finite amount of time, and that will have to cocur between measurements. 
+      <br>
+      The robot could move faster if this delay was decreased. 
+      As seen in the video, the robot gets very very close, almost touching the wall at one point, before it deflects, not resulting in a collision. 
+      In order to minimize crashes we could move slower, take measurements of wall distance more often, or set a larger distance required between the robot and an obstacle, which would work well in a  low-obstacle environment. 
 
 
     </p>
