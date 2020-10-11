@@ -80,13 +80,17 @@
       <br><br> 
       <h4>Time of Flight Sensor</h4>
       <br><br>
-      First, I hooked up the TOF sensor to the Artemis and scanned the i2c bus, finding the address as expected. 
+      First, I hooked up the TOF sensor to the Artemis and scanned the i2c bus, finding the address to be x29 rather than the expected x52. This may be something with dropping the last bit of the address, because 52 and 29 converted to hex differ by only the last bit, which is a zero. 
 
       <br>
       <img src="i2c2.PNG" alt="i2c2" width="320" height="240">
       <br>
       Then, I loaded up the example code to read some data points, and noticed that really close to the sensor, the readings would zero out far before I was actually at the sensor. Therefore, I ran the calibration code with the grey target 5 times, getting offsets of 30, 31, 33, 29, and 31 mm respectively. Therefore, I chose an offset of 31mm. This worked a lot better after again testing with the sensor code. 
       <br><br>
+      We found in lab 3 that the robot had an average fast velocity of 2.4 m/s and a stopping distance of around 13 cm, so the robot will need at least .054 seconds to stop or turn around once it encounters an obstacle. Therefore, the total of the intermeasurement period plus the timing budget is required to be 54 ms. The intermeasurement period must be larger than the timing budget, else nothing else can happen in the code because the next measurement will start immediately. Therefore, I would set the intermeasurement period to be 35ms and the timing budget to be 20ms (the minimum). 
+      <br><br>
+      In order to set the distance mode, I looked at the robot's speed and acceleration. The benefit of the short mode was "better ambient immunity" and of long was "maximum distance". Since the robot can move and accelerate/deccelerate rather quickly, I chose the short mode to better deal with a change in ambient light conditions, as I would be testing this in a place where night vs daytime light makes a big difference. 
+      
 
 
 
