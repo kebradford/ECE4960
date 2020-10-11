@@ -102,11 +102,26 @@
       I also used the micros() function to get the time to read sensor data, and got a bimodial distribution at 12.4 and 14.7ms, likely due to the delay(1) millisecond function while waiting for sensor data. 
 
 
-
-
       <br>
       <img src="TOF.PNG" alt="TOF">
       <br>
+
+      <br><br>
+      <center><h2>Live Obstacle Avoidance</h2></center>
+      <br>
+      I combined several previous programs to create an obstacle avoidance plan. First, I loaded up the motor code that had previously had the robot running in a straight line. 
+      Next, I added in the distance sensor functionality, measuring the distance as described in the previous section. 
+      I then created a simple if-else check to see if there was an obstacle in front of the robot, and, if so, to stop spinning the wheels. Here it is on a platform shown by putting my hand in front of it to stop it 
+      <video width="320" height="240" controls>
+      <source src="platform_stop.mp4" type="video/mp4">
+      </video>
+
+
+
+
+
+
+
 
 
       <br><br>
