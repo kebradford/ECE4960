@@ -93,10 +93,20 @@
       <br><br>
       Next I ran the StatusAndRate example to see what the failure modes could look like when the robot was moving quickly. To test this, I uploaded the code then waved my hand rapidly and chaoticly in front of the sensor, for science. I found that there were occasional errors in the read status such as "Wrapped target fail" and "Signal fail". In the future of motion implementation, I will have to check for these errors and probably disregard certain read test points. 
       <br>
-      <img src="failure_modes.PNG" alt="i2c2">
+      <img src="failure_modes.PNG" alt="failure">
       <br>
+      After editing the code to have the proper offset, short mode, and timing settings, I ran the data collection code with four objects the same as for the proximity sensor. Overall the data was very accurate after all these settings were adjusted. As expected based on setting short mode, the sensor was unable to read data past 1.3m, which aligns with the data sheet. In order to account for the repeatability of measurements, I took the average of 50 readings to determine the value for a given distance. There was much less of a variation in readings depending on color and size of objects placed in front of the sensor, which makes it a much more attractive option than the proximity sensor. 
+      <br>
+      On average, sensor inaccuracy was below 5%, however, this was for the average of 50 readings. Individual readings, which will have to be trusted at high speeds, could be off by as much as 30%. 
+      <br>
+      I also used the micros() function to get the time to read sensor data, and got a bimodial distribution at 12.4 and 14.7ms, likely due to the delay(1) millisecond function while waiting for sensor data. 
 
 
+
+
+      <br>
+      <img src="TOF.PNG" alt="TOF">
+      <br>
 
 
       <br><br>
