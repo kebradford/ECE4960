@@ -134,7 +134,103 @@
       At first I was trying to just stop the motors when it reached what it determined to be an obstacle, but found that on my hardwood floors it would sometimes just slide right into the obstacle. Therefore, I ended up turning the motors in the opposite direction for .25 seconds before stopping to really break hard. 
 
 
+      <br>
+      <code><pre>
 
+                #include <Arduino.h>
+        #include <stdint.h>
+        #include "SCMD.h"
+        #include "SCMD_config.h" //Contains #defines for common SCMD register names and values
+        #include "Wire.h"
+
+        #include <ComponentObject.h>
+        #include <RangeSensor.h>
+        #include <SparkFun_VL53L1X.h>
+        #include <vl53l1x_class.h>
+        #include <vl53l1_error_codes.h>
+
+
+        #include <Wire.h>
+        #include "SparkFun_VL53L1X.h" //Click here to get the library: http://librarymanager/All#SparkFun_VL53L1X
+
+        SCMD myMotorDriver; //This creates the main object of one motor driver and connected slaves.
+
+
+        SFEVL53L1X distanceSensor;
+
+
+        void setup(void)
+        {
+          Wire.begin();
+
+          Serial.begin(115200);
+          Serial.println("VL53L1X Qwiic Test");
+
+          myMotorDriver.settings.commInterface = I2C_MODE;
+          myMotorDriver.settings.I2CAddress = 0x5D; //config pattern "0101" on board for address 0x5A
+
+          //*****initialize the driver get wait for idle*****//
+          while ( myMotorDriver.begin() != 0xA9 ) //Wait until a valid ID word is returned
+          {
+            Serial.println( "ID mismatch, trying again" );
+            delay(500);
+          }
+          Serial.println( "ID matches 0xA9" );
+          while ( myMotorDriver.ready() == false );
+
+          while ( myMotorDriver.busy() );
+          myMotorDriver.enable();
+
+          if (distanceSensor.begin() != 0) //Begin returns 0 on a good init
+          {
+            Serial.println("Sensor failed to begin. Please check wiring. Freezing...");
+            while (1)
+              ;
+          }
+
+          distanceSensor.setOffset(24);
+          Serial.println("Sensor online!");
+
+          distanceSensor.setTimingBudgetInMs(20);
+          distanceSensor.setIntermeasurementPeriod(35);
+          distanceSensor.setDistanceModeShort();
+        }
+
+        void loop(void)
+        {
+
+          distanceSensor.startRanging(); //Write configuration bytes to initiate measurement
+          while (!distanceSensor.checkForDataReady())
+          {
+            delay(1);
+          }
+          int distance = distanceSensor.getDistance(); //Get the result of the measurement from the sensor
+          distanceSensor.clearInterrupt();
+          distanceSensor.stopRanging();
+
+          if(distance>300){
+            myMotorDriver.setDrive( 1, 1, 150); 
+            myMotorDriver.setDrive( 0, 0, 150); 
+         
+            //delay(100);
+          }
+
+          else{
+            myMotorDriver.setDrive( 1, 0, 50); 
+            myMotorDriver.setDrive( 0, 1, 50); 
+            delay(100);
+            myMotorDriver.setDrive( 1, 0, 0); 
+            myMotorDriver.setDrive( 0, 1, 0); 
+         
+            //delay(100);
+          }
+
+          Serial.println();
+        }
+
+      </pre></code>
+
+      <br>
 
 
 
