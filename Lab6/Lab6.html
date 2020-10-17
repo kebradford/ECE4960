@@ -133,7 +133,7 @@
     <br>
 
     <br><br>
-    Next, I implemented a complimentary filter to fuse the readings from the accelerometer and the gyro using the rolling filter suggested in class to get a more accurate and smooth reading. The filter helped negate the drift from the gyro, while also responding quickly and without extreme sensitivity from the accelerometer. 
+    Next, I implemented a complimentary filter to fuse the readings from the accelerometer and the gyro using the rolling filter suggested in class to get a more accurate and smooth reading. The filter helped negate the drift from the gyro, while also responding quickly and without extreme sensitivity from the accelerometer. I chose a higher value of beta than used in class to trust the accelerometer slightly more after some trial and error. 
     <br>
     <img src="pitch_combo.PNG" alt="imu not still">
     <br>
@@ -142,6 +142,25 @@
     beta = .15; 
     pitch_combo = (pitch_combo-myICM.gyrY()*dt)*(1-beta)+pitch_alpha*beta;
     </pre></code>
+
+    <br>
+    <h4>Setting up Magnetometer</h4>
+    <br>
+    <br>
+
+    Finally, I took readings from the magnetometer to acquire yaw. I found that the magnetometer was very innacurate and did not respond well to rotation, only reporting around 30 degrees regardless of which angles I was reading. 
+
+    <code><pre>
+    yaw_mag = atan2((myICM.magX()*cos(pitch_combo) + myICM.magZ()*sin(pitch_combo)), (myICM.magY()*cos(roll_combo) + myICM.magZ()*sin(roll_combo)));
+    </pre></code>
+
+    I determined that the magnetometer would be even worse once mounted to the robot due to noise from the DC motors, and determined that I could instead determine yaw from the gyroscope as Kirstin suggested on CampusWire. The gyro reported a good relative yaw, still drifting but able to respond quickly and robustly to changes in yaw. 
+
+    <br>
+    <img src="gyro_yaw.PNG" alt="imu not still">
+    <br>
+
+
 
     </p>
     <br>
