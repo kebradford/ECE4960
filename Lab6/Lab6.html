@@ -67,9 +67,45 @@
       <br>
 
       First, I read out just the raw data from the accelerometer and plotted it using the Arduino Serial Plotter. Holding it at {-90, 0, 90}, these were the results 
-      
+
       <br>
       <img src="unfiltered_pitchroll.PNG" alt="imu not still">
+      <br>
+
+      I saw that there was a lot of noise on it, so I did some analysis of the accelerometer X data while lying flat on the table. I found an average value of .205 with a stdev of .4, which I did not find unreasonbly uncalibrated for the sensor. An average value of .2 could correspond with my table not being exactly flat. 
+      <br>
+      <img src="accnoise.PNG" alt="imu not still">
+      <br>
+      I next tried tapping at the table while the IMU was sitting still. I found large spikes when this happened. 
+      <br>
+      <img src="tap_imu.PNG" alt="imu not still">
+      <br>
+      So I plotted the FFT in python to see the frequencies of the disturbances. 
+      <br>
+      <img src="frequency_response.PNG" alt="imu not still">
+      <br>
+      The highest frequency response I observed was at 200 Hz. Using the equations from class to calculate alpha, I set RC to 200 Hz and T to 1/(30ms) (the delay time) to achieve an alpha of .14. I tested this functionality by setting up a rolling filter and seeing the response. I tilted the IMU by 90 degrees and observed the change, which was very smooth after the filter was implemented, and not spiky like before. 
+
+      <code><pre>
+
+    pitch_a = atan2(myICM.accX(), myICM.accZ())*180/M_PI;
+    roll_a  = atan2(myICM.accY(), myICM.accZ())*180/M_PI;
+
+    alpha = .14;
+    pitch_alpha = (alpha*pitch_a)+((1-alpha)*old_pitch);
+    old_pitch = pitch_alpha;
+    roll_alpha = (alpha*roll_a)+((1-alpha)*old_roll);
+    old_roll = roll_alpha;
+
+
+      </pre></code>
+
+      <br>
+      <br>
+
+
+      <br>
+      <img src="nice_change.PNG" alt="imu not still">
       <br>
 
 
