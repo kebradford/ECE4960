@@ -125,6 +125,15 @@
     <img src="rollCompare.PNG" alt="imu not still"><img src="pitchCompare.PNG" alt="imu not still">
     <br>
 
+    As expected, the gyro data drifts over time but has very smooth and apparently accurate readings relative to previous readings (the drift makes it overall inaccurate). The gyro was also faster to respond due to the filtering happening on the accelerometer. 
+    <br>
+    Changing the time delay between calls didn't have a huge effect on the accuracy of the reading, but did have a huge effect on how quickly the gyro drifted from center. It was much faster to drift with lower time step, and vice versa. Left image is the slow reading, right is fast
+    <br>
+    <img src="roll_slow.PNG" alt="imu not still"><img src="roll_fast.PNG" alt="imu not still">
+    <br>
+
+    <br><br>
+    Next, I implemented a complimentary filter to fuse the readings from the accelerometer and the gyro using the rolling filter suggested in class to get a more accurate and smooth reading. 
 
     </p>
     <br>
