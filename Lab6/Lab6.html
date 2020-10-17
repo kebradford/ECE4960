@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Lab 6</title>
+    <style>
+      body{
+        padding: 0 80px;}
+    </style>
+</head>
+  <body>
+    <div id= "header">
+      <center><h1> Lab 6 - PID Control</h1></center>
+    </div>
+    <div id = "navbar">
+      <a href="https://kebradford.github.io/ECE4960"><button class="btn"><i class="fa fa-home"></i> Back to Home Page</button></a>
+    </div>
+    <br>
+    <br>
+    <center><h2>Objective </h2></center>
+    
+      <p>Get PID control working with IMU</p>
+      <br>
+    <br>
+    <center><h2>Materials Used</h2></center>
+       <ul>
+         <li>1 RC Car</li>
+         <li>1 Artemis Nano</li>
+         <li>1 USB A/C Cable</li>
+         <li>2 batteries (car battery, board battery)</li>
+         <li>1 Sparkfun motor driver</li>
+         <li>3 Qwiic connectors</li>
+         <li>2 screwdrivers (flathead and phillips)</li>
+         <li>1 wire stripper/cutter</li>
+         <li>1 TOF sensor</li>
+         <li>1 IMU</li>
+       </ul>
+    <br>
+    <br>
+
+
+    <center><h2>Procedure</h2></center>
+    <p>
+
+      <br>
+      <h4>Setting up IMU</h4>
+      <br>
+      First, I hooked up the IMU to the Artemis board via Qwic connector and used the wire code to scan the i2c bus. I found the sensor at 0x69 as expected. 
+      <br>
+      <img src="i2c.PNG" alt="i2c">
+      <br>
+      Playing around with the IMU on my desk, I found that the acceleration data generally hovered around (0, 0, 1000) when laying flat, which is expected for 0 acceleration in the x and y directions and 1g of acceleration in the z direction due to gravity. The magnetometer and gyroscope data hovered around zero as well, again expected as the IMU was not moving. 
+      <br>
+      <img src="IMU_still.PNG" alt="imu still">
+      <br>
+      When I started waving the IMU around, I got more erratic data reads from all sensors on the 9 DOF IMU. 
+      <br>
+      <img src="IMU_notstill.PNG" alt="imu not still">
+      <br>
+    </p>
+    <br>
+    
+  
+ 
+   <a href="#header"><button class="btn"><i class="fa fa-arrow-up"></i>Return to top</button></a>
+   </body>
+</html>
