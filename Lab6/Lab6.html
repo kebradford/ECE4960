@@ -69,20 +69,20 @@
       First, I read out just the raw data from the accelerometer and plotted it using the Arduino Serial Plotter. Holding it at {-90, 0, 90}, these were the results 
 
       <br>
-      <img src="unfiltered_pitchroll.PNG" alt="imu not still">
+      <img src="unfiltered_pitchroll.PNG" alt="imu not still" width="320" height="240">
       <br>
 
       I saw that there was a lot of noise on it, so I did some analysis of the accelerometer X data while lying flat on the table. I found an average value of .205 with a stdev of .4, which I did not find unreasonbly uncalibrated for the sensor. An average value of .2 could correspond with my table not being exactly flat. 
       <br>
-      <img src="accnoise.PNG" alt="imu not still">
+      <img src="accnoise.PNG" alt="imu not still" width="320" height="240">
       <br>
       I next tried tapping at the table while the IMU was sitting still. I found large spikes when this happened. 
       <br>
-      <img src="tap_imu.PNG" alt="imu not still">
+      <img src="tap_imu.PNG" alt="imu not still" width="320" height="240">
       <br>
       So I plotted the FFT in python to see the frequencies of the disturbances. 
       <br>
-      <img src="frequency_response.PNG" alt="imu not still">
+      <img src="frequency_response.PNG" alt="imu not still" width="320" height="240">
       <br>
       The highest frequency response I observed was at 200 Hz. Using the equations from class to calculate alpha, I set RC to 200 Hz and T to 1/(30ms) (the delay time) to achieve an alpha of .14. I tested this functionality by setting up a rolling filter and seeing the response. I tilted the IMU by 90 degrees and observed the change, which was very smooth after the filter was implemented, and not spiky like before. 
 
@@ -105,7 +105,7 @@
 
 
       <br>
-      <img src="nice_change.PNG" alt="imu not still">
+      <img src="nice_change.PNG" alt="imu not still" width="320" height="240">
       <br>
 
 
@@ -122,7 +122,7 @@
     I compared the filtered accelerometer data to the gyro data to see how they differ with roll and pitch. 
 
     <br>
-    <img src="rollCompare.PNG" alt="imu not still"><img src="pitchCompare.PNG" alt="imu not still">
+    <img src="rollCompare.PNG" alt="imu not still" width="320" height="240"><img src="pitchCompare.PNG" alt="imu not still" width="320" height="240">
     <br>
 
     As expected, the gyro data drifts over time but has very smooth and apparently accurate readings relative to previous readings (the drift makes it overall inaccurate). The gyro was also faster to respond due to the filtering happening on the accelerometer. 
@@ -135,7 +135,7 @@
     <br><br>
     Next, I implemented a complimentary filter to fuse the readings from the accelerometer and the gyro using the rolling filter suggested in class to get a more accurate and smooth reading. The filter helped negate the drift from the gyro, while also responding quickly and without extreme sensitivity from the accelerometer. I chose a higher value of beta than used in class to trust the accelerometer slightly more after some trial and error. 
     <br>
-    <img src="pitch_combo.PNG" alt="imu not still">
+    <img src="pitch_combo.PNG" alt="imu not still" width="320" height="240">
     <br>
 
     <code><pre>
@@ -157,7 +157,7 @@
     I determined that the magnetometer would be even worse once mounted to the robot due to noise from the DC motors, and determined that I could instead determine yaw from the gyroscope as Kirstin suggested on CampusWire. The gyro reported a good relative yaw, still drifting but able to respond quickly and robustly to changes in yaw. 
 
     <br>
-    <img src="gyro_yaw.PNG" alt="imu not still">
+    <img src="gyro_yaw.PNG" alt="imu not still" width="320" height="240">
     <br>
 
 
