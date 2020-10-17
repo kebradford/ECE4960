@@ -133,7 +133,15 @@
     <br>
 
     <br><br>
-    Next, I implemented a complimentary filter to fuse the readings from the accelerometer and the gyro using the rolling filter suggested in class to get a more accurate and smooth reading. 
+    Next, I implemented a complimentary filter to fuse the readings from the accelerometer and the gyro using the rolling filter suggested in class to get a more accurate and smooth reading. The filter helped negate the drift from the gyro, while also responding quickly and without extreme sensitivity from the accelerometer. 
+    <br>
+    <img src="pitch_combo.PNG" alt="imu not still">
+    <br>
+
+    <code><pre>
+    beta = .15; 
+    pitch_combo = (pitch_combo-myICM.gyrY()*dt)*(1-beta)+pitch_alpha*beta;
+    </pre></code>
 
     </p>
     <br>
