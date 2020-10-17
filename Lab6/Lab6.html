@@ -162,6 +162,31 @@
 
 
 
+
+    <center><h2>Simulation</h2></center>
+    <br> 
+    To test the simulation, I downloaded lab6 code and ran the simulator. I opened the Jupyter notebook and started playing around with the odometer vs ground truth data 
+
+    <code><pre>
+    odom_pos = robot.get_pose() 
+    gt_pos   = robot.get_gt_pose()
+    print(odom_pose)
+    print(gt_pose)
+    </pre></code>
+    This would show to a fairly high number of sigfigs the position of the robot, which I tested by dragging it around with my mouse and rerunning. After satisying myself with that, I opened up the plotter ("B, S"). I simply pass the x and y values of the get_pose() functions to the plotter to see how close they are. 
+
+    <br>
+    <img src="sim_code.PNG" alt="imu not still">
+    <br>
+
+
+    <br><br>
+    I first ran the code while the robot was stationary for as long as it took to start typing this section up, and it drifted quite a bit. 
+
+    <br>
+    <img src="stationary_sim.PNG" alt="imu not still">
+    <br>
+
     </p>
     <br>
     
