@@ -109,6 +109,23 @@
       <br>
 
 
+    <h4>Setting up Gyro</h4>
+    <br>
+    Next, I computed the pitch, yaw and roll with the gyro using simple accumulator functions.
+
+    <code><pre>
+    pitch_g = pitch_g - myICM.gyrY()*dt; 
+    roll_g = roll_g + myICM.gyrX()*dt; 
+    yaw_g = yaw_g+myICM.gyrZ()*dt;
+    </pre></code>
+
+    I compared the filtered accelerometer data to the gyro data to see how they differ with roll and pitch. 
+
+    <br>
+    <img src="rollCompare.PNG" alt="imu not still"><img src="pitchCompare.PNG" alt="imu not still">
+    <br>
+
+
     </p>
     <br>
     
