@@ -24,7 +24,7 @@ double pitch_g, roll_g, yaw_g;
 
 ///////PID Stuff////////////////////////////////////////////////
 double Setpoint, Input, Output; // for PID control
-double Kp=3, Ki=.1, Kd=0; //CHANGE THESE CONSTANTS FOR PID
+double Kp=2, Ki=.1, Kd=0; //CHANGE THESE CONSTANTS FOR PID
 double last_yaw = 0;
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 ////////////////////////////////////////////////////////////////
@@ -85,16 +85,13 @@ void loop() {
 
     yaw_g = yaw_g+myICM.gyrZ()*dt;
 
-    double yaw_delta = yaw_g - last_yaw;
-
-    last_yaw = yaw_g;
 
     Input    = myICM.gyrZ();
     Setpoint = 50;
 
     double motorVal;
     myPID.Compute(); //compute Output for motors
-    if(Output>200) motorVal = 180;
+    if(Output>180) motorVal = 180;
     else motorVal = Output;
     myMotorDriver.setDrive( 1, 1, motorVal); 
     myMotorDriver.setDrive( 0, 1, motorVal);
