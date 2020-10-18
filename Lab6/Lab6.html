@@ -267,6 +267,18 @@
       <source src="untethered.mp4" type="video/mp4">
       </video>
     <br>
+
+    <code><pre>
+    Input    = myICM.gyrZ();
+    Setpoint = 50;
+
+    double motorVal;
+    myPID.Compute(); //compute Output for motors
+    if(Output>180) motorVal = 180;
+    else motorVal = Output;
+    myMotorDriver.setDrive( 1, 1, motorVal); 
+    myMotorDriver.setDrive( 0, 1, motorVal);
+  </pre></code>
     <br>
     <br>
 
