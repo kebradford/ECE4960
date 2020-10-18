@@ -24,7 +24,7 @@ double pitch_g, roll_g, yaw_g;
 
 ///////PID Stuff////////////////////////////////////////////////
 double Setpoint, Input, Output; // for PID control
-double Kp=1.5, Ki=.1, Kd=0; //CHANGE THESE CONSTANTS FOR PID
+double Kp=3, Ki=.5, Kd=0; //CHANGE THESE CONSTANTS FOR PID
 double last_yaw = 0;
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 ////////////////////////////////////////////////////////////////
