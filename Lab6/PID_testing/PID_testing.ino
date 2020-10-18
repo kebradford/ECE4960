@@ -24,7 +24,7 @@ double pitch_g, roll_g, yaw_g;
 
 ///////PID Stuff////////////////////////////////////////////////
 double Setpoint, Input, Output; // for PID control
-double Kp=5, Ki=3, Kd=2; //CHANGE THESE CONSTANTS FOR PID
+double Kp=3, Ki=.1, Kd=0; //CHANGE THESE CONSTANTS FOR PID
 double last_yaw = 0;
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 ////////////////////////////////////////////////////////////////
@@ -89,22 +89,25 @@ void loop() {
 
     last_yaw = yaw_g;
 
-    Input    = yaw_delta;
-    Setpoint = 2;
+    Input    = myICM.gyrZ();
+    Setpoint = 50;
 
+    double motorVal;
     myPID.Compute(); //compute Output for motors
-    
-    myMotorDriver.setDrive( 1, 1, Output); 
-    myMotorDriver.setDrive( 0, 1, Output);
+    if(Output>200) motorVal = 180;
+    else motorVal = Output;
+    myMotorDriver.setDrive( 1, 1, motorVal); 
+    myMotorDriver.setDrive( 0, 1, motorVal);
+
 
     Serial.print("MotorValue:");
-    Serial.print(Output);
+    Serial.print(motorVal);
     Serial.print(" ");
     Serial.print("GyroData:");
-    Serial.println(yaw_delta);
+    Serial.println(Input);
 
 
-    delay(10);
+    delay(1);
   }else{
     //Serial.println("Waiting for data");
     delay(500);

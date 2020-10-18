@@ -246,6 +246,12 @@
     <img src="KVals251.PNG"  width="320" height="240">
     <br>
 
+    Next I tried dropping the delay value between reads/writes. I don't know how feasible this will be when mapping, but perhaps for the initial just scanning while it isn't driving the delay can be lower. I did this with a Kp of 3 and a Ki of .1 which appeared to help a little bit. I also set max and min values that the controller could set the motor to, because it was jumping from 0-255 too much. I limited it between 50 and 200. 
+
+    <br>
+    <img src="littlejerky.PNG"  width="320" height="240">
+    <br>
+
     <br>
     <br>
     <br>
