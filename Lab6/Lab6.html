@@ -240,7 +240,11 @@
       <source src="smooth_enough.mp4" type="video/mp4">
       </video>
     <br>
-    This was with setting Kp to 2 and all other constants to zero, with an average spin speed of around 100 deg/sec. This was with a fresh battery, and is the best I've been able to do so far. Adding Kd and Ki constants has only made things worse as far as I can tell. 
+    This was with setting Kp to 2 and all other constants to zero, with an average spin speed of around 100 deg/sec. This was with a fresh battery, and is the best I've been able to do so far. Adding Kd and Ki constants has only made things worse as far as I can tell. When incorportating those, the robot just jerks around and the PID controller is trying to ramp up too hard. The problem is that values 0-180 won't turn at all, so it quickly ramps up to 255, which is too high, then tries to adjust by going back below 180. 
+
+    <br>
+    <img src="KVals251.PNG"  width="320" height="240">
+    <br>
 
     <br>
     <br>
