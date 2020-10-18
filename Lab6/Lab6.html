@@ -230,6 +230,23 @@
 
     As seen in the above figure, the slowest I could rotate was around 155 degrees per second. Given the TOF has a minimum reading time of 20ms, the robot would rotate 3 degrees each reading. If the robot was initially .5m from the wall, after a 3 degree rotation it would be .5m/cos(3) = .500686 meters away from the wall for a delta of .686 mm. However, if the robot started at a 45 degree angle, the initial TOF reading would be .7071m, and the reading after an extra 3 degrees of rotation would be .7472m for a delta of 40mm. 
 
+    <br>
+
+    Next I got to the real PID tuning. This was very difficult. Most of the time the scans were pretty bad. I used the built in Arduino PID tuner with tunable coefficients. 
+    <br>
+    I started with just proportional control (P) and got a rather jerky but slightly slower/smoother scan than I was getting initially 
+    <br>
+      <video width="320" height="240" controls>
+      <source src="smooth_enough.mp4" type="video/mp4">
+      </video>
+    <br>
+    This was with setting Kp to 2 and all other constants to zero, with an average spin speed of around 100 deg/sec. This was with a fresh battery, and is the best I've been able to do so far. Adding Kd and Ki constants has only made things worse as far as I can tell. 
+
+    <br>
+    <br>
+    <br>
+    <br>
+    Now, to set up the PID controller, I 
 
 
 
@@ -250,6 +267,12 @@
 
 
 
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
     <center><h2>Simulation</h2></center>
     <br> 
     To test the simulation, I downloaded lab6 code and ran the simulator. I opened the Jupyter notebook and started playing around with the odometer vs ground truth data 

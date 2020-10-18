@@ -12,19 +12,22 @@
 #define WIRE_PORT Wire  // Your desired Wire port.      Used when "USE_SPI" is not defined
 #define AD0_VAL   1     // The value of the last bit of the I2C address. 
 
+#include <PID_v1.h> //PID library
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 ICM_20948_I2C myICM;  // Otherwise create an ICM_20948_I2C object
 SCMD myMotorDriver; //This creates the main object of one motor driver and connected slaves.
 
-double pitch_a = 0, roll_a = 0;
-double alpha, beta;
-double pitch_alpha = 0, roll_alpha = 0; 
-double old_pitch = 0, old_roll = 0;
-double dt, lastRead; 
+double dt, lastRead, rotationalSpeed; 
 double pitch_g, roll_g, yaw_g; 
-double pitch_combo, roll_combo;
-double yaw_mag;
+
+///////PID Stuff////////////////////////////////////////////////
+double Setpoint, Input, Output; // for PID control
+double Kp=5, Ki=3, Kd=2; //CHANGE THESE CONSTANTS FOR PID
+double last_yaw = 0;
+PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
+////////////////////////////////////////////////////////////////
 
 void setup() {
 
@@ -64,6 +67,9 @@ void setup() {
   //*****Set application settings and enable driver*****//
   while ( myMotorDriver.busy() );
   myMotorDriver.enable();
+
+
+  myPID.SetMode(AUTOMATIC); ///start PID 
 }
 
 void loop() {
@@ -73,34 +79,29 @@ void loop() {
   if( myICM.dataReady() ){
     
     myICM.getAGMT();                // The values are only updated when you call 'getAGMT'
-//    printRawAGMT( myICM.agmt );     // Uncomment this to see the raw values, taken directly from the agmt structure
-    //printScaledAGMT( myICM.agmt);   // This function takes into account the sclae settings from when the measurement was made to calculate the values with units
 
-    pitch_a = atan2(myICM.accX(), myICM.accZ())*180/M_PI;
-    roll_a  = atan2(myICM.accY(), myICM.accZ())*180/M_PI;
-
-    alpha = .14;
-    pitch_alpha = (alpha*pitch_a)+((1-alpha)*old_pitch);
-    old_pitch = pitch_alpha;
-    roll_alpha = (alpha*roll_a)+((1-alpha)*old_roll);
-    old_roll = roll_alpha;
-   
     dt = (millis()-lastRead)/1000;
     lastRead = millis();
 
-    pitch_g = pitch_g - myICM.gyrY()*dt; 
-    roll_g = roll_g + myICM.gyrX()*dt; 
     yaw_g = yaw_g+myICM.gyrZ()*dt;
 
-    beta = .05; 
+    double yaw_delta = yaw_g - last_yaw;
 
-    pitch_combo = (pitch_combo-myICM.gyrY()*dt)*(1-beta)+pitch_alpha*beta;
-    roll_combo =  (roll_combo-myICM.gyrX()*dt)*(1-beta)+roll_alpha*beta;
+    last_yaw = yaw_g;
 
-    Serial.println(yaw_g);
-    myMotorDriver.setDrive( 1, 1, 180); 
-    myMotorDriver.setDrive( 0, 1, 180);
+    Input    = yaw_delta;
+    Setpoint = 2;
 
+    myPID.Compute(); //compute Output for motors
+    
+    myMotorDriver.setDrive( 1, 1, Output); 
+    myMotorDriver.setDrive( 0, 1, Output);
+
+    Serial.print("MotorValue:");
+    Serial.print(Output);
+    Serial.print(" ");
+    Serial.print("GyroData:");
+    Serial.println(yaw_delta);
 
 
     delay(10);
