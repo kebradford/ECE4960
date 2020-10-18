@@ -120,40 +120,42 @@ void loop() {
     roll_combo =  (roll_combo-myICM.gyrX()*dt)*(1-beta)+roll_alpha*beta;
 
     Serial.println(yaw_g);
+    myMotorDriver.setDrive( 1, 1, 180); 
+    myMotorDriver.setDrive( 0, 1, 180);
 
-    for (int i = 0; i <motorSpeedMax; i+=1){
-      myICM.getAGMT(); 
-        myMotorDriver.setDrive( 1, dirMotors, i); 
-        myMotorDriver.setDrive( 0, dirMotors, i);
-
-        dt = (millis()-lastRead)/1000;
-        lastRead = millis();
-        yaw_g = yaw_g+myICM.gyrZ()*dt; 
-        Serial.print("motorSpeed:");
-        Serial.print(i);
-        Serial.print(" ");
-        Serial.print("yaw:");
-        Serial.println(yaw_g);
-        
-        delay(100);
-    }
-    for (int i = motorSpeedMax; i>=0; i-=1){
-      myICM.getAGMT(); 
-        myMotorDriver.setDrive( 1, dirMotors, i); 
-        myMotorDriver.setDrive( 0, dirMotors, i);
-
-        dt = (millis()-lastRead)/1000;
-        lastRead = millis();
-        yaw_g = yaw_g+myICM.gyrZ()*dt;
-        Serial.print("motorSpeed:");
-        Serial.print(i);
-        Serial.print(" ");
-        Serial.print("yaw:");
-        Serial.println(yaw_g);
-        dt = (millis()-lastRead)/1000;
-        lastRead = millis();
-        delay(100);
-    }
+//    for (int i = 0; i <motorSpeedMax; i+=1){
+//      myICM.getAGMT(); 
+//        myMotorDriver.setDrive( 1, dirMotors, i); 
+//        myMotorDriver.setDrive( 0, dirMotors, i);
+//
+//        dt = (millis()-lastRead)/1000;
+//        lastRead = millis();
+//        yaw_g = yaw_g+myICM.gyrZ()*dt; 
+//        Serial.print("motorSpeed:");
+//        Serial.print(i);
+//        Serial.print(" ");
+//        Serial.print("yaw:");
+//        Serial.println(yaw_g);
+//        
+//        delay(100);
+//    }
+//    for (int i = motorSpeedMax; i>=0; i-=1){
+//      myICM.getAGMT(); 
+//        myMotorDriver.setDrive( 1, dirMotors, i); 
+//        myMotorDriver.setDrive( 0, dirMotors, i);
+//
+//        dt = (millis()-lastRead)/1000;
+//        lastRead = millis();
+//        yaw_g = yaw_g+myICM.gyrZ()*dt;
+//        Serial.print("motorSpeed:");
+//        Serial.print(i);
+//        Serial.print(" ");
+//        Serial.print("yaw:");
+//        Serial.println(yaw_g);
+//        dt = (millis()-lastRead)/1000;
+//        lastRead = millis();
+//        delay(100);
+//    }
 
     delay(10);
   }else{
