@@ -167,9 +167,49 @@
     <br>
     <br>
     First, I tested to see how the robot could reliably spin on its own axis but ramping up and ramping down the speed as the wheels spun in opposite directions. I stopped the ramp up at 200 motor speed, because I found the robot was quickly spinning at this time and I didn't need to go higher for this data. The robot wouldn't start turning at all before around 150, and wouldn't start consistently spinning with both wheels until 190. 
+
+    <code><pre>
+        for (int i = 0; i <motorSpeedMax; i+=1){
+      myICM.getAGMT(); 
+        myMotorDriver.setDrive( 1, dirMotors, i); 
+        myMotorDriver.setDrive( 0, dirMotors, i);
+
+        dt = (millis()-lastRead)/1000;
+        lastRead = millis();
+        yaw_g = yaw_g+myICM.gyrZ()*dt; 
+        Serial.print("motorSpeed:");
+        Serial.print(i);
+        Serial.print(" ");
+        Serial.print("yaw:");
+        Serial.println(yaw_g);
+        
+        delay(100);
+    }
+    for (int i = motorSpeedMax; i>=0; i-=1){
+      myICM.getAGMT(); 
+        myMotorDriver.setDrive( 1, dirMotors, i); 
+        myMotorDriver.setDrive( 0, dirMotors, i);
+
+        dt = (millis()-lastRead)/1000;
+        lastRead = millis();
+        yaw_g = yaw_g+myICM.gyrZ()*dt;
+        Serial.print("motorSpeed:");
+        Serial.print(i);
+        Serial.print(" ");
+        Serial.print("yaw:");
+        Serial.println(yaw_g);
+        dt = (millis()-lastRead)/1000;
+        lastRead = millis();
+        delay(100);
+    }
+    </pre></code>
+
+    
     <br>
     <img src="ramp_up.PNG" alt="imu not still" width="320" height="240">
     <br>
+
+
 
 
 
