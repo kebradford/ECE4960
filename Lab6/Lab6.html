@@ -228,7 +228,7 @@
     <img src="yaw_rate.PNG"  width="320" height="240">
     <br>
 
-    As seen in the above figure, the slowest I could rotate was around 155 degrees per second. Given the TOF has a ranging frequency of TODO blah blah
+    As seen in the above figure, the slowest I could rotate was around 155 degrees per second. Given the TOF has a minimum reading time of 20ms, the robot would rotate 3 degrees each reading. If the robot was initially .5m from the wall, after a 3 degree rotation it would be .5m/cos(3) = .500686 meters away from the wall for a delta of .686 mm. However, if the robot started at a 45 degree angle, the initial TOF reading would be .7071m, and the reading after an extra 3 degrees of rotation would be .7472m for a delta of 40mm. 
 
 
 
