@@ -163,6 +163,31 @@ def update_step(eta, obs, u):
 
 
       </pre></code>
+
+      <h3>Mapping</h3>
+    <br>
+    This part of the lab was especially challenging due to struggles with Bluetooth. I had been having issues with bluetooth in the PID lab, which is why I chose to go with a cabled approach, but I decided I needed to figure it out sooner or later. 
+    <br>
+    After many hours of debugging and finally calling with Vivek, I discovered that Windows was being especially clingy with control of the Bluetooth module, so I needed to disable it and delete the drivers so the VM could have control. Finally, I could send data over bluetooth.
+    <br>
+    I added both Bluetooth and TOF functionality to my PID loop from last lab, simply integrating my work from the Bluetooth and TOF labs to send distance and IMU data over bluetooth to the VM. 
+    <br>
+    Once I got this functionality working, I tried just running the robot on my desk and plotting the polar coordinates, which seemed to be about what I expected. This is a log plot because it was dominated by the robot turning to face the room, which maxed out the sensor. 
+    <br>
+      <img src="polar_desk.PNG" alt="imu not still" width="320" height="240">
+      <br>
+
+
+
+
+
+
+
+
+
+
+
+
     </p>
     <br>
     
