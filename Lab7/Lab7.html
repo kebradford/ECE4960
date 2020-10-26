@@ -188,15 +188,48 @@ def update_step(eta, obs, u):
       <img src="map.PNG" alt="imu not still" width="200" height="320">
     <br>
 
-    I took two measurements each from the points indicated in the above plot. I then used the transformation matrix talked about all the way back in lecture 2 regarding a rotation around z, which this was. 
+    I took two measurements each from the points indicated in the above plot. I then used the transformation matrix talked about all the way back in lecture 2 regarding a rotation around z, which this was, to get X and Y data from my rotational data. 
 
- <br>
+    <br>
       <img src="rotation_matrix.PNG" alt="imu not still" width="200" height="320">
     <br>
 
+    I decided to just use an offset when calculating x and y of where I had started the robot, in the below case corresponding to 550mm away in the x and 370 in the y. 
+
+     <br>
+    <code><pre>
+    A=load('room1.txt');
+
+    theta         = A(:,1);
+    theta_radians = deg2rad(theta);
+    r             = A(:,2);
+
+    x_data = zeros(1, length(r));
+    y_data = zeros(1, length(r));
 
 
+    for i = 1:length(r)
+        r_matrix = [r(i); 0; 1];
+        rotation_matrix = [cos(theta_radians(i)) -sin(theta_radians(i)) 0; sin(theta_radians(i)) cos(theta_radians(i)) 0; 0 0 1;];
+        new_matrix = rotation_matrix*r_matrix;
+        x_data(i) = (new_matrix(1)-550);
+        y_data(i) = (new_matrix(2)-370);
+    end
 
+
+    </pre></code>
+
+    After running this 4 times, 2 each from each point, I obtained the following map 
+
+    <br>
+      <img src="matlab.PNG" alt="imu not still" width="200" height="320">
+    <br>
+
+    <br>
+      <img src="overlay.PNG" alt="imu not still" width="200" height="320">
+    <br>
+    
+    
 
     </p>
     <br>
