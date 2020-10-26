@@ -224,13 +224,46 @@ def update_step(eta, obs, u):
     <br>
       <img src="matlab.PNG" alt="imu not still" >
     <br>
-The data is fairly consistent. the primary source of error is the robot not being able to see around obstacles and projecting a sort of triangle in the space that the obstacle covers. I overlayed it with a map of what the room actually looks like and it's not bad. 
+    The data is fairly consistent. the primary source of error is the robot not being able to see around obstacles and projecting a sort of triangle in the space that the obstacle covers. I overlayed it with a map of what the room actually looks like and it's not bad. 
     <br>
       <img src="overlay.PNG" alt="imu not still" >
     <br>
     
+    I created lines based on this to feed into the simulator, as shown below. 
 
+    <code><pre>
+    # Start points for each line segment describing the map
+    start_points = np.array([[-1.85, -.790],
+                             [.2, -.79],
+                             [-1.85, -.79],
+                             [-1.85, 0],
+                             [-1.85, -.18],
+                             [-1.3, -.18],
+                             [-1.1, -.79], 
+                             [-.7, -.79],
+                             [-1.1, -.6],
+                             [-.500, -.1], 
+                             [-.500, -.1]   ])
+
+    # End points for each line segment describing the map
+    end_points = np.array([[.2, -.79],
+                           [.2, 0],
+                           [-1.85, 0],
+                           [.2, 0],
+                           [-1.3, -.18],
+                           [-1.3, 0],
+                           [-1.1, -.6], 
+                           [-.7, -.6],
+                           [-.7, -.6],
+                           [-.5, 0], 
+                           [.2, -.1]])
+
+
+    </pre></code>
     
+    <br>
+      <img src="insim.PNG" alt="imu not still" >
+    <br>
 
     </p>
     <br>
