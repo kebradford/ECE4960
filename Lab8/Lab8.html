@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Lab 7</title>
+    <style>
+      body{
+        padding: 0 80px;}
+    </style>
+</head>
+  <body>
+    <div id= "header">
+      <center><h1> Lab 8 - Grid Localization using Bayes Filter</h1></center>
+    </div>
+    <div id = "navbar">
+      <a href="https://kebradford.github.io/ECE4960"><button class="btn"><i class="fa fa-home"></i> Back to Home Page</button></a>
+    </div>
+    <br>
+    <br>
+    <center><h2>Objective </h2></center>
+    
+      <p>Implement the Bayes filter in Simulation</p>
+      <br>
+
+      To start this lab, I looked over the thorough notes Vivek had left on last week's attempt at psuedo code. I realized a few fundamental misunderstandings I had, as well as some more subtle things I had missed. 
+      <br>
+      To start with, I wrote the compute_control function. According to the feedback from last week, I was very close, and just needed to normalize the angle. I also got rid of some intermediate functions that would cause the sim to run even more slowly.
+      <br>
+      Although this was the simplest function, it actually ended up causing me the most pain. I made a very silly mistake of converting from radians to degrees incorrectly at first, which was causing all of my probabilities to go to zero and my entire implementation to not work. Vivek helped me out and suggested I use the helper functions in Python, which ended up fixing my code. 
+
+      <code><pre>
+
+      def compute_control(cur_pose, prev_pose):
+    """ Given the current and previous odometry poses, this function extracts
+    the control information based on the odometry motion model.
+
+    Args:
+        cur_pose  ([Pose]): Current Pose
+        prev_pose ([Pose]): Previous Pose 
+
+    Returns:
+        [delta_rot_1]: Rotation 1  (degrees)
+        [delta_trans]: Translation (meters)
+        [delta_rot_2]: Rotation 2  (degrees)
+    """
+    #getting vars from input
+    distX     = cur_pose[0] - prev_pose[0];
+    distY     = cur_pose[1] - prev_pose[1];
+
+    
+    #calculating results based on lecture 11
+    delta_rot_1 = loc.mapper.normalize_angle((math.degrees(math.atan2(distY, distX))) - prev_pose[2]); 
+    
+    return delta_rot_1, np.sqrt((distX*distX)+(distY*distY)), loc.mapper.normalize_angle((cur_pose[2]-prev_pose[2]-delta_rot_1))
+
+    </pre></code>
+    <br>
+
+    <br>
+    <br>
+
+
+    <center><h2>Procedure</h2></center>
+    <p>
+
+    <h3></h3>
+
+    </p>
+    <br>
+    
+  
+ 
+   <a href="#header"><button class="btn"><i class="fa fa-arrow-up"></i>Return to top</button></a>
+   </body>
+</html>

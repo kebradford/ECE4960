@@ -102,3 +102,20 @@ def update_step(eta, obs, u):
     
     loc.bel = eta*sensor_model(obs, u)*loc.bel_bar;
     
+
+    start_points = np.array([[-1.85, -.790],
+                         [.2, .79],
+                         [-1.85, -.79],
+                         [-1.85, 0],
+                         [2, 2],
+                         [2, -2],
+                         [-2, -2]])
+
+# End points for each line segment describing the map
+end_points = np.array([[.2, -.79],
+                       [.2, 0],
+                       [-1.85, 0],
+                       [.2, 0],
+                       [2, -2],
+                       [-2, -2],
+                       [-2, 2]])
