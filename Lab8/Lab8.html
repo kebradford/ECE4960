@@ -92,6 +92,33 @@
     <br>
 
 
+    Penultimately, I worked on the sensor_model function. This I did not quite understand while doing the psuedocode: I added a "u" which was supposed to represent a mean, because I didn't understand how to use the Gaussian for this single measurement. Then, I realized I needed to use the obs_view function to obtain the views for a passed position, which I could then look at the different for the observation passed, and compare to a mean of zero, which would be the ideal delta, meaning the measurements were the same. 
+
+<code><pre>
+    def sensor_model(obs, pos):
+    """ This is the equivalent of p(z|x).
+
+
+    Args:
+        obs ([ndarray]): A 1D array consisting of the measurements made in rotation loop
+        pos            : x, y, a tuple
+
+    Returns:
+        [ndarray]: Returns a 1D array of size 18 (=loc.OBS_PER_CELL) with the likelihood of each individual measurements
+    """
+    prob_array = [0]*mapper.OBS_PER_CELL;
+    element = mapper.obs_views[(pos[0], pos[1], pos[2])]
+    
+    for i in range(mapper.OBS_PER_CELL):
+        prob_array[i] = loc.gaussian(obs[i]-element[i], 0, loc.sensor_sigma);
+
+
+    return prob_array
+
+    </pre></code>
+
+
+
     <center><h2>Procedure</h2></center>
     <p>
 
