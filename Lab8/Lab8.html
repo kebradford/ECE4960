@@ -61,7 +61,34 @@
     </pre></code>
     <br>
 
+    Next, I worked on the odom_motion_model function. This was actually already fine as I wrote it initially, and so i left it alone. I simplified it to one line, again removing intermediate stored values to speed up the code. 
+    <code><pre>
+    return loc.gaussian(computed_control[0], u[0], loc.odom_trans_sigma)*loc.gaussian(computed_control[1], u[1], loc.odom_rot_sigma)*loc.gaussian(computed_control[2], u[2], loc.odom_rot_sigma)
+    </pre></code>
+
+    Next, I moved to the prediction_step function. Here, my feedback was that I had not used enough for loops. Eventually, I figured out this meant that I was supposed to be looping through every previous case during every current case, which resulted in many many traversals of the nodes. When I first ran this, it took forever. I waited twenty minutes and it hadn't even gone through one node's worth of calculations. In order to fix this, I looked into the implementation hints on the course website. It suggested disgarding probabilities lower than .0001. After adding that in, I would not have to traverse all current nodes for the previous node. Further, I hadn't included the from_map utility that would allow the odom_motion_model to correctly calculate the given nodes. 
+
     <br>
+
+     <code><pre>
+        computed_control = compute_control(cur_odom, prev_odom)
+    
+    for xpast in range(mapper.MAX_CELLS_X):
+        for ypast in range(mapper.MAX_CELLS_Y):
+            for apast in range(mapper.MAX_CELLS_A):
+                
+
+                if (loc.bel[(xpast, ypast, apast)] > .00001): 
+                  
+                    for xcur in range(mapper.MAX_CELLS_X):
+                        for ycur in range(mapper.MAX_CELLS_Y):
+                            for acur in range(mapper.MAX_CELLS_A):
+                                
+                                prob_state = odom_motion_model(mapper.from_map(xcur, ycur, acur), mapper.from_map(xpast, ypast, apast), computed_control)
+  
+                                loc.bel_bar[(xcur, ycur, acur)] += loc.bel[(xpast, ypast, apast)]*prob_state
+    </pre></code>
+
     <br>
 
 
