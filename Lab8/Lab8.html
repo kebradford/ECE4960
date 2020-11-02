@@ -117,6 +117,39 @@
 
     </pre></code>
 
+The final function gave me the most trouble. I was very confused about how to implement it. Using the implementation keys was very helpful, as I learned I needed to multiply all the probabilities of every of the 18 views. Then, I could update each bel function. I also learned the importance of normalizing the bels by using np.sum(loc.bel) so that the probabilities wouldn't dip below zero due to underflow issues. I've had a lot of overflow issues in the past with my programming experience, but this was the first time i needed to consider underflow. 
+
+    <code><pre>
+def update_step():
+    """ Update step of the Bayes Filter.
+    Update the probabilities in loc.bel based on loc.bel_bar and the sensor model.
+    """
+    for xpos in range(mapper.MAX_CELLS_X):
+        for ypos in range(mapper.MAX_CELLS_Y):
+            for apos in range(mapper.MAX_CELLS_A):
+                
+        
+                cur_pose         = np.array([xpos, ypos, apos])
+                prob_sense       = 1;
+                sense_model      = sensor_model(loc.obs_range_data, cur_pose)
+                
+                for k in range(mapper.OBS_PER_CELL): 
+                    prob_sense *= sense_model[k]
+
+                loc.bel[(xpos, ypos, apos)] = prob_sense*loc.bel_bar[(xpos, ypos, apos)];
+    loc.bel = loc.bel/np.sum(loc.bel)
+
+    </pre></code>
+
+At first, my code was not remotely working, and well reflected how I was feeling about it 
+<br>
+      <img src="notworking.png"><img src="icry.png">
+    <br>
+
+    After some help from Vivek in debugging, I found that pesky degrees issue mentioned early, and incredibly my filter was working. 
+    <br>
+      <img src="working.png"><img src="icry.png">
+    <br>
 
 
     <center><h2>Procedure</h2></center>
