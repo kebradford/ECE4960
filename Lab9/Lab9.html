@@ -57,11 +57,11 @@
     Next, I moved to online mode. First, I played around with Bluetooth ensuring I could also recieve bluetooth commands on the artemis, which I accomplished using the await theRobot.sendMessage() function. This ended up being fairly easy to implement, so I was able to send a command to tell the robot to perform a scan. I wrote this data to a file, where I paired down the data into the closest increments to 20 degrees as possible. 
 
 <code><pre> 
-  if(unpack("<IQ", data)[0] >= nextIndex + 20):
-                    print(unpack("<IQ", data))
+  if(unpack("IQ", data)[0] >= nextIndex + 20):
+                    print(unpack("IQ", data))
                     
-                    f = open("scan.txt", "a")
-                    f.write(str(unpack("<IQ", data)))
+                    f = open(scan.txt", "a")
+                    f.write(str(unpack("IQ", data)))
                     f.write("\n")
                     f.close()
                     
