@@ -60,7 +60,7 @@
   if(unpack("<IQ", data)[0] >= nextIndex + 20):
                     print(unpack("<IQ", data))
                     
-                    f = open("scan.txt", "a")
+                    f = open("scan.txt', "a")
                     f.write(str(unpack("<IQ", data)))
                     f.write("\n")
                     f.close()
@@ -68,8 +68,33 @@
                     nextIndex +=20
     </pre></code>
 
+an example of the output can be seen here : 
+<code><pre>
+(0, 28)
+(22, 519)
+(44, 240)
+(67, 635)
+(80, 743)
+(101, 476)
+(122, 351)
+(141, 208)
+(160, 106)
+(180, 277)
+(202, 250)
+(223, 278)
+(242, 260)
+(261, 188)
+(282, 472)
+(309, 296)
+(324, 86)
+(343, 454)
+(360, 329)
+    </pre></code>
+Although they are not perfectly 20 degrees apart, they are fairly close. I can then read this file into Jupyter lab when a scan is requested. The scan stops at 360 degrees. 
 
-
+<video width="320" height="240" controls>
+      <source src="scan.mp4" type="video/mp4">
+      </video>
     <h3></h3>
 
     </p>
