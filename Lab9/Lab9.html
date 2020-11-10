@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Lab 9</title>
+    <style>
+      body{
+        padding: 0 80px;}
+    </style>
+</head>
+  <body>
+    <div id= "header">
+      <center><h1> Lab 9 - Grid Localization using Bayes Filter - Real</h1></center>
+    </div>
+    <div id = "navbar">
+      <a href="https://kebradford.github.io/ECE4960"><button class="btn"><i class="fa fa-home"></i> Back to Home Page</button></a>
+    </div>
+    <br>
+    <br>
+    <center><h2>Objective </h2></center>
+    
+      <p>Offline Localization</p>
+
+    <p>
+        <br>
+        I started with offline localization. I copied over my map data from Lab7. 
+        <br>
+      <img src="map_setup.PNG">
+    <br>
+    I then had to update the mapper call to fit my bounds. I updated min and max x/y as well as the cell size to fit my grid, which resulted in a mapper call of 
+
+     <code><pre>
+  mapper = Mapper(min_x=-1.85, max_x=.2, min_y=-.79, max_y=0, min_a=-180, max_a=180,
+                cell_size_x=0.1025, cell_size_y=0.0395, cell_size_a=20,
+                max_cells_x=20, max_cells_y=20, max_cells_a=18,
+                ray_length=3, lines=[start_points, end_points], obs_per_cell=18, 
+                robot=robot)
+    </pre></code>
+    <br>
+    Then, I ran a scan at a given point (-.55, -.37) on my floor. I paired down the data to 18 points evenly spaced by 20 degrees and wrote that data to loc.obs_range_data for the Bayes filter to try and guess where I was. It did a fairly good job, a few cells off, but my cells were very very small to begin with. 
+
+    <br>
+      <img src="offline_close.PNG"><img src="offline_compare2.PNG">
+    <br>
+    <h3></h3>
+
+    </p>
+    <br>
+    
+  
+ 
+   <a href="#header"><button class="btn"><i class="fa fa-arrow-up"></i>Return to top</button></a>
+   </body>
+</html>
