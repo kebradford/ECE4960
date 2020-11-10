@@ -175,8 +175,6 @@ void setup()
       //*****Set application settings and enable driver*****//
       while ( myMotorDriver.busy() );
       myMotorDriver.enable();
-      myMotorDriver.setDrive( 1, 1, 0); 
-      myMotorDriver.setDrive( 0, 1, 0);
     
     
       myPID.SetMode(AUTOMATIC); ///start PID 
@@ -186,147 +184,139 @@ void setup()
 void loop()
 {
     //Serial.println("Loop...."); //KHE Loops constantly....no delays
-    //perform_scan();
-        if (l_Rcvd > 1) //Check if we have a new message from amdtps_main.c through BLE_example_funcs.cpp
+
+
+    /////////////motor and IMU writing///////////////////////////////////////////////////////////////////////////////////////////
+    if( myICM.dataReady() ){
+  
+      //Read yaw data
+      myICM.getAGMT();                // The values are only updated when you call 'getAGMT'
+      dt = (millis()-lastRead)/1000;
+      lastRead = millis();
+      yaw_g = yaw_g+myICM.gyrZ()*dt;
+      Serial.print("Yaw:");
+      Serial.println(yaw_g);
+  
+      //get distance
+      distanceSensor.startRanging(); //Write configuration bytes to initiate measurement
+      distance = distanceSensor.getDistance(); //Get the result of the measurement from the sensor
+      distanceSensor.clearInterrupt();
+      distanceSensor.stopRanging();
+      Serial.print("Distance(mm): ");
+      Serial.println(distance);
+  
+      double motorVal;
+      //myPID.Compute(); //compute Output for motors
+      motorVal = 130;
+     // else motorVal = Output;
+      myMotorDriver.setDrive( 1, 1, motorVal); 
+      myMotorDriver.setDrive( 0, 1, motorVal);
+  
+  
+      delay(1);
+    }else{
+      //Serial.println("Waiting for data");
+      delay(500);
+    }
+
+    if (l_Rcvd > 1) //Check if we have a new message from amdtps_main.c through BLE_example_funcs.cpp
     {
 
         cmd = (cmd_t *)m_Rcvd;
 
         switch (cmd->command_type)
         {
+        case SET_MOTORS:
+
+            Serial.println("Placeholder: Set Motors");
+
+            break;
+        case GET_MOTORS:
+
+            Serial.println("Placeholder: Set Motors");
+            //amdtpsSendData((uint8_t *)res_cmd, *val_len);
+            break;
         case SER_RX:
             Serial.println("Got a serial message");
             pushMessage((char *)&cmd->data, cmd->length);
             Serial.println("Message recieved is: " + String((char *)&cmd->data));
-            if (String((char *)&cmd->data) == "observe"){
-              perform_scan();
-              myMotorDriver.setDrive( 1, 1, 0); 
-              myMotorDriver.setDrive( 0, 1, 0);
-            }
+            break;
+        case REQ_FLOAT:
+            Serial.println("Going to send a float");
+            //TODO: Put a float (perhaps pi) into a command response and send it.
+            amdtpsSendData((uint8_t *)res_cmd, TODO_VAL);
+            break;
+        case PING:
+            Serial.println("Ping Pong");
+            cmd->command_type = PONG;
+            amdtpsSendData(m_Rcvd, l_Rcvd);
+            break;
+        case START_BYTESTREAM_TX:
+            bytestream_active = (int)cmd->data[0];
+            bytestream_active = true;
+            //Serial.printf("Start bytestream with active %d \n", bytestream_active);
+            //((uint32_t *)res_cmd->data)[0] = 0;
+            break;
+        case STOP_BYTESTREAM_TX:
+            bytestream_active = 0;
             break;
         default:
             Serial.printf("Unsupported Command 0x%x \n", cmd->command_type);
             break;
         }
+
         l_Rcvd = 0;
         am_hal_wdt_restart();
         free(m_Rcvd);
     } //End if s_Rcvd != 100
+    else if ((s_Rcvd[0] == '6' && s_Rcvd[1] == '7'))
+    {
+        s_Rcvd[0] = 0;
+        digitalWrite(LED_BUILTIN, HIGH);
+        //Serial.printf("Connected, length was %d", l_Rcvd);
+    }
+    else if ((s_Rcvd[0] == '6' && s_Rcvd[1] == '8'))
+    {
+        digitalWrite(LED_BUILTIN, LOW);
+        Serial.println("disconnected");
+        //Decimal value of D for Disconnect
+        //Serial.println("got disconnect from case in ino file - set_Stop");
+        digitalWrite(LED_BUILTIN, LOW);
+        //amdtps_conn_close();
+        DmDevReset();
+    }
+
+    if (availableMessage())
+    {
+        Serial.println("Bluetooth Message:");
+        Serial.println(pullMessage());
+        printOverBluetooth("Message Received.");
+    }
+
+   if (bytestream_active)
+    {
+
+        res_cmd->command_type = BYTESTREAM_TX;
+        res_cmd->length = 64;
+       
+        uint32_t numToSendShort = yaw_g;
+        uint64_t numToSendLong  = distance;
+
+        memcpy(res_cmd->data, &numToSendShort, 4);
+        memcpy(res_cmd->data+4, &numToSendLong, 8);
+ 
+        //Serial.printf("Stream %d \n", bytestream_active);
+        amdtpsSendData((uint8_t *)res_cmd, 14);
+
+    }
+
 
     trigger_timers();
-    delay(10);
 
-    /////////////motor and IMU writing///////////////////////////////////////////////////////////////////////////////////////////
-    
+
+    delay(10);
 } //END LOOP
 
 void perform_scan(){
-  yaw_g = 0;
-  delay(1000);
-  while(yaw_g<360) {
-    if( myICM.dataReady() ){
-    
-        //Read yaw data
-        myICM.getAGMT();                // The values are only updated when you call 'getAGMT'
-        dt = (millis()-lastRead)/1000;
-        lastRead = millis();
-        yaw_g = yaw_g+myICM.gyrZ()*dt;
-        Serial.print("Yaw:");
-        Serial.println(yaw_g);
-    
-        //get distance
-        distanceSensor.startRanging(); //Write configuration bytes to initiate measurement
-        distance = distanceSensor.getDistance(); //Get the result of the measurement from the sensor
-        distanceSensor.clearInterrupt();
-        distanceSensor.stopRanging();
-        Serial.print("Distance(mm): ");
-        Serial.println(distance);
-    
-        double motorVal;
-        //myPID.Compute(); //compute Output for motors
-        motorVal = 170;
-       // else motorVal = Output;
-        myMotorDriver.setDrive( 1, 1, motorVal); 
-        myMotorDriver.setDrive( 0, 1, motorVal);
-    
-    
-        delay(1);
-      }else{
-        //Serial.println("Waiting for data");
-        delay(500);
-      }
   
-      if (l_Rcvd > 1) //Check if we have a new message from amdtps_main.c through BLE_example_funcs.cpp
-      {
-  
-          cmd = (cmd_t *)m_Rcvd;
-  
-          switch (cmd->command_type)
-          {
-  
-          case SER_RX:
-              Serial.println("Got a serial message");
-              pushMessage((char *)&cmd->data, cmd->length);
-              Serial.println("Message recieved is: " + String((char *)&cmd->data));
-              break;
-          case START_BYTESTREAM_TX:
-              bytestream_active = (int)cmd->data[0];
-              bytestream_active = true;
-              //Serial.printf("Start bytestream with active %d \n", bytestream_active);
-              //((uint32_t *)res_cmd->data)[0] = 0;
-              break;
-          case STOP_BYTESTREAM_TX:
-              bytestream_active = 0;
-              break;
-          default:
-              Serial.printf("Unsupported Command 0x%x \n", cmd->command_type);
-              break;
-          }
-  
-          l_Rcvd = 0;
-          am_hal_wdt_restart();
-          free(m_Rcvd);
-      } //End if s_Rcvd != 100
-      else if ((s_Rcvd[0] == '6' && s_Rcvd[1] == '7'))
-      {
-          s_Rcvd[0] = 0;
-          digitalWrite(LED_BUILTIN, HIGH);
-          //Serial.printf("Connected, length was %d", l_Rcvd);
-      }
-      else if ((s_Rcvd[0] == '6' && s_Rcvd[1] == '8'))
-      {
-          digitalWrite(LED_BUILTIN, LOW);
-          Serial.println("disconnected");
-          //Decimal value of D for Disconnect
-          //Serial.println("got disconnect from case in ino file - set_Stop");
-          digitalWrite(LED_BUILTIN, LOW);
-          //amdtps_conn_close();
-          DmDevReset();
-      }
-  
-      if (availableMessage())
-      {
-          Serial.println("Bluetooth Message:");
-          Serial.println(pullMessage());
-          printOverBluetooth("Message Received.");
-      }
-  
-     if (bytestream_active)
-      {
-  
-          res_cmd->command_type = BYTESTREAM_TX;
-          res_cmd->length = 64;
-         
-          uint32_t numToSendShort = yaw_g;
-          uint64_t numToSendLong  = distance;
-  
-          memcpy(res_cmd->data, &numToSendShort, 4);
-          memcpy(res_cmd->data+4, &numToSendLong, 8);
-  
-          amdtpsSendData((uint8_t *)res_cmd, 14);
-  
-      }
-      trigger_timers();
-      delay(10);
-  }//end while
 }
