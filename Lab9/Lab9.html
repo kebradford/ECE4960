@@ -108,6 +108,16 @@ theRobot = theRobotHolder.getRobot()
       <img src="bluetoothcomms.PNG">
     <br>
 
+    After that, I started to port over the code I had written for the bluetooth script into the new code. Again following Alex's suggestion, I added a doScan function into ECE4960robot.py, which would send a command over bluetooth to have the robot do a scan, pretty much the same as I was doing in the offline mode, but instead of writing to a file, I wrote to a variable self.obs_array which would store approximately every 20 degrees of my scan, which were all sent over bluetooth. 
+
+<code><pre>
+    async def doScan(self): 
+        await self.sendMessage("observe")
+        while(not self.obsData):
+            await asyncio.sleep(.1)
+        await asyncio.sleep(5)
+        return self.obsData
+</pre></code>
     </p>
     <br>
     
