@@ -113,7 +113,7 @@ theRobot = theRobotHolder.getRobot()
 <code><pre>
     async def doScan(self): 
         await self.sendMessage("observe")
-        while(not self.obsData):
+        while(not self.obs_array):
             await asyncio.sleep(.1)
         await asyncio.sleep(5)
         return self.obsData
