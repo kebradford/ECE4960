@@ -96,7 +96,18 @@ Although they are not perfectly 20 degrees apart, they are fairly close. I can t
       <source src="scan.mp4" type="video/mp4">
       </video>
     <h3></h3>
-The next challenge was getting the asyncronous bluetooth script to integrate with the Jupyter notebook. 
+The next challenge was getting the asyncronous bluetooth script to integrate with the Jupyter notebook. I struggled with this for a while until Alex posted his video with suggestions on how to integrate the bluetooth code into Jupyter notebook. I brought all the files into the jupyter notebook, created a robot class to reference, and imported main directly into jupyter script. I added a short bit of code to pull the robot into the script 
+<code><pre>
+loop = asyncio.get_event_loop()
+asyncio.gather(robotTest(loop))
+theRobot = theRobotHolder.getRobot()
+    </pre></code>
+    After this, and toying around with bluetooth settings in my host OS, I finally got the two communicating 
+
+    <br>
+      <img src="bluetoothcomms.PNG">
+    <br>
+
     </p>
     <br>
     
