@@ -118,6 +118,15 @@ theRobot = theRobotHolder.getRobot()
         await asyncio.sleep(5)
         return self.obsData
 </pre></code>
+
+I was able to return every (approximately) 20 degrees from the TOF sensor into this variable, which I can then feed into the Bayes filter code in the RealRobot function. For the time being I set odometry to be hardcoded, because I wanted to see if just the scanning would work without also incorporating motion. I added this, called it to set loc.obs_range_data, and the Bayes filter returned the approximate position!
+It returned very similarly to how the sim lab9 code did, as shown above. 
+<br>
+      <img src="real_bayes.PNG">
+    <br>
+    This was super exciting as it showed that my code worked for spinning the robot on the map and returning a (roughly) correct position! At this point I decided to take a break and do the odometry/motion on everyone's favorite day to work, tomorrow. 
+    <br>
+    Unfortunately, when I returned, my Bluetooth was no longer functional. Due to not wanting to lose more slip days or horus or sleep on this lab, I decided to give it a rest, therefore I will not be finishing the lab. 
     </p>
     <br>
     
