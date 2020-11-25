@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Lab 10</title>
+    <style>
+      body{
+        padding: 0 80px;}
+    </style>
+</head>
+  <body>
+    <div id= "header">
+      <center><h1> Lab 10 - Navigation and Planning - Sim & Real</h1></center>
+    </div>
+    <div id = "navbar">
+      <a href="https://kebradford.github.io/ECE4960"><button class="btn"><i class="fa fa-home"></i> Back to Home Page</button></a>
+    </div>
+    <br>
+    <br>
+    <center><h2>Objective </h2></center>
+    <p>
+      The objective of this lab was to incorporate old labs and accomplish navigation and planning both in simulation and on the physical robot, ideally using things from previous labs. 
+    <h3>Simulation </h3>
+    To start with, I worked on the robot in simulation. First, I opened up the provided code for lab10 and subbed in my own matrix, based on the room space that I had mapped in lab 7 and have been working with since. Next, I looked into different algorithms for navigation and planning from our lectures earlier this semester. I decided that by far the easiest, and very doable given my configuration, would be a Bug algorithm. Looking through them, I found the most efficient to be the Bug2 algorithm, which follows a vector towards the goal until it runs into an obstacle, then circumnavigates that obstacle until it can get back on track towards the goal. 
+
+    <img src="bugalgo.PNG" alt="i2c1" width="320" height="240">
+
+    To implement this, I first created a simple function that in planner_query.py that would call the start and end point calculated randomly by the script, and calculate block by block the fastest way there. I did this in only two dimensions, allowing the robot to move up, down, left or right only. The script simply checks if the next best step is right, left, up or down, based on how large the delta Y and delta X are, and attempts to move in that direction. If there is a wall in that direction, the follow wall script is called. This code is called iteratively, so that each time a new point is calculated, that becomes "currPoints", and goal points stays the same, so the script terminates when currPoints = goalPoints. 
+
+    <h3>Going to the next step </h3>
+    <code><pre> 
+      def add_line(self, currPoints, goalPoints): 
+        
+        deltaX = -currPoints[1] + goalPoints[1]
+        deltaY = -currPoints[0] + goalPoints[0]
+        
+        if (abs(deltaX) > abs(deltaY)):
+            if(deltaX > 0): #positive delta
+                if(self.grid[currPoints[0], currPoints[1]+1] == 1): #obstacle that way       
+                    delta_out = self.follow_wall(currPoints, goalPoints, 0) #todo: implement
+                    return delta_out
+                else: #no obstacle, go that way 
+                    return currPoints[0], currPoints[1]+1
+                
+            else: #negative delta 
+                if(self.grid[currPoints[0], currPoints[1]-1] == 1): #obstacle that way 
+                    delta_out = self.follow_wall(currPoints, goalPoints, 1) #todo: implement
+                    return delta_out
+                else: #no obstacle, go that way 
+                    return currPoints[0], currPoints[1]-1
+        else: 
+            
+            if(deltaY > 0): #positive delta
+                if(self.grid[currPoints[0]+1, currPoints[1]] == 1): #obstacle that way       
+                    delta_out = self.follow_wall(currPoints, goalPoints, 2) #todo: implement
+                    return delta_out
+                else: #no obstacle, go that way 
+                    return currPoints[0]+1, currPoints[1]
+                
+            else: #negative delta 
+                if(self.grid[currPoints[0]-1, currPoints[1]] == 1): #obstacle that way 
+                    delta_out = self.follow_wall(currPoints, goalPoints, 3) #todo: implement
+                    return delta_out
+                else: #no obstacle, go that way 
+                    return currPoints[0]-1, currPoints[1]
+    </pre></code>
+
+     <h3>Wall following </h3>
+    <code><pre> 
+      def follow_wall(self, currPoints, goalPoints, moveDir):
+        
+        deltaX = -currPoints[1] + goalPoints[1]
+        deltaY = -currPoints[0] + goalPoints[0]
+        
+        leftWall   = self.grid[currPoints[0], currPoints[1]-1] == 1
+        rightWall  = self.grid[currPoints[0], currPoints[1]+1] == 1
+        topWall    = self.grid[currPoints[0]-1, currPoints[1]] == 1
+        bottomWall = self.grid[currPoints[0]+1, currPoints[1]] == 1
+       ############################################################ 
+        if(moveDir == 0): #right wall 
+            if(deltaY>0): #goal below
+                if(not bottomWall): 
+                    return currPoints[0]+1, currPoints[1] #move down
+                elif (not leftWall):
+                    return currPoints[0], currPoints[1]-1 #move left
+                else: 
+                    return currPoints[0]-1, currPoints[1] #move up
+            else: #goal above
+                if(not topWall): 
+                    return currPoints[0]-1, currPoints[1] #move up
+                elif (not leftWall):
+                    return currPoints[0], currPoints[1]-1 #move left
+                else: 
+                    return currPoints[0]+1, currPoints[1] #move down
+      ############################################################          
+        elif (moveDir == 1): #left wall
+            if(deltaY>0): #goal below
+                if(not bottomWall): 
+                    return currPoints[0]+1, currPoints[1] #move down
+                elif (not leftWall):
+                    return currPoints[0], currPoints[1]+1 #move right
+                else: 
+                    return currPoints[0]-1, currPoints[1] #move up
+            else: #goal above
+                if(not topWall): 
+                    return currPoints[0]-1, currPoints[1] #move up
+                elif (not leftWall):
+                    return currPoints[0], currPoints[1]+1 #move right
+                else: 
+                    return currPoints[0]+1, currPoints[1] #move down
+       ##############################################################
+        elif (moveDir == 2): #bottom wall
+            if(deltaX>0): #goal left
+                if(not leftWall): 
+                    return currPoints[0], currPoints[1]+1 #move right
+                elif (not leftWall):
+                    return currPoints[0]-1, currPoints[1] #move up
+                else: 
+                    return currPoints[0], currPoints[1]-1 #move left
+            else: #goal right
+                if(not rightWall):
+                    return currPoints[0], currPoints[1]-1 #move left
+                elif (not leftWall):
+                    return currPoints[0]-1, currPoints[1] #move up
+                else: 
+                    return currPoints[0], currPoints[1]+1 #move right
+        ############################################################### 
+        else:  #top wall
+            if(deltaX>0): #goal left
+                if(not leftWall): 
+                    return currPoints[0], currPoints[1]+1 #move right
+                elif (not leftWall):
+                    return currPoints[0]+1, currPoints[1] #move down
+                else: 
+                    return currPoints[0], currPoints[1]-1 #move left
+            else: #goal right
+                if(not rightWall):
+                    return currPoints[0], currPoints[1]-1 #move left
+                elif (not leftWall):
+                    return currPoints[0]+1, currPoints[1] #move down
+                else: 
+                    return currPoints[0], currPoints[1]+1 #move right
+    </pre></code>
+    Wall following is very naive: it first calculates where the walls are in relation to the current position, knowing the direction the robot would ideally like to move in, and picks the next best option. For instance, if the robot would like to move left, but moving down would also help get closer to the goal, it moves in that direction. This algorithm deprioritizes but still allows for moving away from the goal if that is the only option. Below are several examples of the algorithm working. I did not originally have a large obstacle that would obstruct many paths, so I later added a false obstacle to ensure the wall following was working as intended. 
+
+    <img src="grid1.PNG" alt="i2c1" width="320" height="240"><img src="grid2.PNG" alt="i2c1" width="320" height="240"><img src="grid3.PNG" alt="i2c1" width="320" height="240">
+    <br>
+    <img src="grid4.PNG" alt="i2c1" width="320" height="240"><img src="grid5.PNG" alt="i2c1" width="320" height="240"><img src="grid6.PNG" alt="i2c1" width="320" height="240">
+    <br>
+    <img src="grid_obstacle1.PNG" alt="i2c1" width="320" height="240"><img src="grid_obstacle2.PNG" alt="i2c1" width="320" height="240"><img src="grid_obstacle3.PNG" alt="i2c1" width="320" height="240">
+    <br>
+    <br>
+    <br>
+    Now that I had a working algorithm, I wanted to incorporate it into the simulator to visualize how the robot should move along these pre-ordained vectors. I first had to translate the provided points into map coordinates, which was a simple conversion 
+    <code><pre> 
+      stepY = (interm_steps[i+1][0]*-.79/16)*2;
+      stepX = (interm_steps[i+1][1]*(2.05/23)-1.85)*2;
+    </pre></code>
+
+    Once I had done that, I could visualize these points by entering them iteratively as ground truth points on the simulator, which immediately worked very well. 
+
+    <img src="on_mymap1.PNG" alt="i2c1" width="320" height="240"><img src="on_mymap2.PNG" alt="i2c1" width="320" height="240"><img src="on_mymap3.PNG" alt="i2c1" width="320" height="240"><img src="on_mymap4.PNG" alt="i2c1" width="320" height="240">
+    <br>
+    Next, I wanted to set up the world so that I could test the robot moving around similar to how mine would in real life. With some help from Vivek on Campuswire, I edited my playground script to set up the simulator in the same way my world was set up, and changed the starting position of the robot to the starting position as generated by the random placement generator. After that, I simply looped through each of the points in the previously generated navigation plan, converting them to the map, and sending it to the robot to move. 
+
+    <code><pre> 
+      # Reset Plots
+      robot.reset()
+      loc.plotter.reset_plot()
+
+      for i in range(len(interm_steps)):
+          #print(interm_steps[i])
+          nextStepY = (interm_steps[i][0]*-.79/16)*2;
+          nextStepX = (interm_steps[i][1]*(2.05/23)-1.85)*2;
+
+          
+          loc.plotter.plot_point(nextStepX, nextStepY, GT)
+              
+          if(i is not len(interm_steps)-1):
+              stepY = (interm_steps[i+1][0]*-.79/16)*2;
+              stepX = (interm_steps[i+1][1]*(2.05/23)-1.85)*2;
+
+              move_to_next((nextStepX,nextStepY, 0), (stepX,stepY, 0))
+              loc.plotter.plot_point(robot.get_gt_pose()[0], robot.get_gt_pose()[1], ODOM)
+    </pre></code>
+
+    As you can see in the above code, I have a move_to_next script that actually moves the simulated robot from point to point. It uses closed loop feedback to analyze where the robot is in x, y, and theta space, and moves accordingly. For instance, in a left move, the robot will turn until the angle is 180 degrees, then it will continue slowly forward until the gt position is close enough to what the next point is supposed to be.
+
+    <code><pre> 
+      def move_to_next(currPos, nextPos):
+        deltaX = nextPos [0] - currPos[0] 
+        deltaY = nextPos [1] - currPos[1] 
+        
+        
+        if(currPos[0]&gt;nextPos[0]): #moving left
+            print("moving left")
+            nextAng = 180;
+            robot.set_vel(0,.1)
+        
+            while(round(robot.get_gt_pose()[2]) != nextAng): #wait till it gets to the right angle
+       
+            robot.set_vel(.1,0)
+            while(round(robot.get_gt_pose()[0],1) != round(nextPos[0], 1)): #wait till it gets to the right distance
+                
+            robot.set_vel(0,0)
+            
+        elif(currPos[0]&lt;nextPos[0]): #moving right
+            print("moving right")
+            nextAng = 0;
+            robot.set_vel(0,.1)
+            while(round(robot.get_gt_pose()[2]) != nextAng): #wait till it gets to the right angle
+   
+            robot.set_vel(.1,0)
+            while(round(robot.get_gt_pose()[0], 2) != round(nextPos[0], 2)): #wait till it gets to the right distance
+           
+            robot.set_vel(0,0)
+        elif(currPos[1]&gt;nextPos[1]): #moving down
+            print("moving down")
+            nextAng = -90;
+            robot.set_vel(0,.1)
+            while(round(robot.get_gt_pose()[2]) != nextAng): #wait till it gets to the right angle
+            
+            robot.set_vel(.1,0)
+            while(round(robot.get_gt_pose()[1], 2) != round(nextPos[1], 2)): #wait till it gets to the right distance
+              
+            
+            robot.set_vel(0,0)
+        else: #moving up
+            print("moving up")
+            nextAng = 90;
+            robot.set_vel(0,.1)
+            while(round(robot.get_gt_pose()[2]) != nextAng): #wait till it gets to the right angle
+           
+            robot.set_vel(.1,0)
+            while(round(robot.get_gt_pose()[1], 2) != round(nextPos[1], 2)): #wait till it gets to the right distance
+               
+            robot.set_vel(0,0)
+    </pre></code>
+
+    <video width="320" height="240" controls>
+      <source src="working_sim1.mp4" type="video/mp4">
+      </video>
+      <video width="320" height="240" controls>
+      <source src="working_sim2.mp4" type="video/mp4">
+      </video>
+
+    </p>
+    <br>
+    
+  
+ 
+   <a href="#header"><button class="btn"><i class="fa fa-arrow-up"></i>Return to top</button></a>
+   </body>
+</html>
