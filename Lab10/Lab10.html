@@ -242,7 +242,7 @@
             robot.set_vel(0,0)
     </pre></code>
 
-    As seen in the following videos, this code worked great and I was able to watch the robot move from point to point. Also included is an image of where the robot is moving vs where its supposed to be moving, which is very close. 
+    As seen in the following videos, this code worked great and I was able to watch the robot move from point to point. Also included is an image of where the robot is moving vs where its supposed to be moving, which is very close. The robot moved very slowly, so this video is sped up 8x
         <br>
         <img src="withodom.PNG" alt="i2c1" width="320" height="240">
         <br>
@@ -257,7 +257,164 @@
 
     </p>
     <br>
-    
+
+    <h3>Real Life</h3>
+    <br>
+    Next, I worked on implementing this on my robot. I was actually able to largely port over the move_to_next code I used for most of the navigation. 
+    <br>
+    First in my Arduino script, I pass the coordinates from the calculated navigation as an array of points to be moved from. All the main script does is loop through these points, sending them to the moveToPoint script. 
+<code><pre>
+    void loop()
+{
+    setMotors(0, 0);
+    for(int i = 0; i&lt;len(movePoints); i ++){ //till penultimate row 
+      moveToPoint(i, movePoints[i][1], movePoints[i][0], movePoints[i+1][1], movePoints[i+1][0] ); //number, currX, currY, nextX, nextY
+    }
+    </pre></code>
+
+    <br>
+    To start off with, I created several helper functions that would get odometry as well as set the motor values, so that the primary script could be more concise. getYaw uses the same code as in PID and other programs earlier written that will taking a running integral of gyro values, so there is still a bit of drift, setMotors simply sets the motor values, and getDist() uses the TOF sensor to determine how far away it is from the wall or obstacle in front of it. 
+
+    <code><pre>
+      ///returns current value of yaw
+          int getYaw(){
+            while(not(myICM.dataReady())){}
+            if( myICM.dataReady() ){
+                  //Read yaw data
+                  myICM.getAGMT();                // The values are only updated when you call 'getAGMT'
+                  dt = (millis()-lastRead)/1000;
+                  lastRead = millis();
+                  yaw_g = yaw_g+myICM.gyrZ()*dt;
+                  int normyaw = -1;
+
+                  //normalize the angle
+                  if(yaw_g < 0){
+                    while(normyaw<0){
+                      normyaw = yaw_g + 360;
+                    }
+                  }
+                  else{
+                    normyaw = yaw_g;
+                  }
+                  //Serial.print("Yaw:");
+                  //Serial.println(yaw_g);
+                  return(int(yaw_g));
+               }
+          }
+
+          void setMotors(int motor1, int motor2){
+            myMotorDriver.setDrive( 1, 1, motor1); 
+            myMotorDriver.setDrive( 0, 1, motor2);
+          }
+
+          int getDist(){
+            
+            distanceSensor.startRanging(); //Write configuration bytes to initiate measurement
+            distance = distanceSensor.getDistance(); //Get the result of the measurement from the sensor
+            distanceSensor.clearInterrupt();
+            distanceSensor.stopRanging();
+            //Serial.print("Distance(mm): ");
+            //Serial.println(distance);
+            
+            return distance;
+          }
+
+    </pre></code>
+    Then, I created the main program. It essentially does the same thing as in my sim, where it determines where (up down left or right) the next point is, and then turns the robot to face in that direction and moves till it has gone far enough to be one "block," which I started as .15m.
+
+
+
+    <code><pre>
+
+      void moveToPoint(int i, int currX, int currY, int nextX, int nextY){
+
+
+        int   currAngle  = getYaw();
+        float startDist  = getDist();
+        float currDist   = getDist();
+        float blockDistX = 150; //how long a "block" is; will need to determine experimentally 
+        float blockDistY = 150; //how long a "block" is; will need to determine experimentally 
+        int   nextAng    = 0;
+        
+        if(currX&lf;nextX){ //moving left
+            Serial.print("moving left");
+            nextAng = 180;
+
+            ///////Turn left///////
+            setMotors(motorSpeed, -motorSpeed);
+            while(currAngle != nextAng){
+              currAngle = getYaw();
+              delay(10);
+              } //wait till it gets to the right angle
+            Serial.println("angle correct");
+            startDist = getDist();
+            
+            setMotors(motorSpeed, motorSpeed);
+            while(currDist >= startDist - blockDistX){
+              currDist = getDist();
+              } //wait till it gets to the right distance
+         
+         
+            setMotors(0, 0);
+            
+        }
+        else if(currX>nextX){ //moving right
+            Serial.print("moving right");
+            nextAng = 0;
+            
+            setMotors(motorSpeed, -motorSpeed);
+            while(currAngle != nextAng){
+              currAngle = getYaw();
+              } //wait till it gets to the right angle
+   
+            setMotors(motorSpeed, motorSpeed); //robot.set_vel(.1,0)
+            currDist = getDist();
+            while(currDist >= startDist - blockDistX){
+              currDist = getDist();
+              } 
+
+            setMotors(0, 0); //robot.set_vel(0,0)
+        }
+        else if(currY&lf;nextY){ //moving down
+            Serial.print("moving down");
+            nextAng = 270;
+            //robot.set_vel(0,.1)
+            setMotors(motorSpeed, -motorSpeed);
+            while(currAngle != nextAng){
+              currAngle = getYaw();
+              } //wait till it gets to the right angle
+            
+            setMotors(motorSpeed, motorSpeed); //robot.set_vel(.1,0)
+            currDist = getDist();
+            while(currDist >= startDist - blockDistY){
+              currDist = getDist();
+              } 
+            
+            //robot.set_vel(0,0)
+            setMotors(0, 0);
+        }
+        else{ //moving up
+            Serial.print("moving right");
+            nextAng = 90;
+            
+            setMotors(motorSpeed, -motorSpeed); //robot.set_vel(0,.1)
+            
+            while(currAngle != nextAng){
+              currAngle = getYaw();
+              } //wait till it gets to the right angle
+              
+            
+            setMotors(motorSpeed, motorSpeed); //robot.set_vel(.1,0)
+            currDist = getDist();
+            while(currDist >= startDist - blockDistY){
+              currDist = getDist();
+              } 
+           
+            setMotors(0, 0); // robot.set_vel(0,0)
+        }
+}
+
+    </pre></code>
   
  
    <a href="#header"><button class="btn"><i class="fa fa-arrow-up"></i>Return to top</button></a>
