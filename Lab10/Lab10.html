@@ -97,54 +97,7 @@
                     return currPoints[0], currPoints[1]-1 #move left
                 else: 
                     return currPoints[0]+1, currPoints[1] #move down
-      ############################################################          
-        elif (moveDir == 1): #left wall
-            if(deltaY>0): #goal below
-                if(not bottomWall): 
-                    return currPoints[0]+1, currPoints[1] #move down
-                elif (not leftWall):
-                    return currPoints[0], currPoints[1]+1 #move right
-                else: 
-                    return currPoints[0]-1, currPoints[1] #move up
-            else: #goal above
-                if(not topWall): 
-                    return currPoints[0]-1, currPoints[1] #move up
-                elif (not leftWall):
-                    return currPoints[0], currPoints[1]+1 #move right
-                else: 
-                    return currPoints[0]+1, currPoints[1] #move down
-       ##############################################################
-        elif (moveDir == 2): #bottom wall
-            if(deltaX>0): #goal left
-                if(not leftWall): 
-                    return currPoints[0], currPoints[1]+1 #move right
-                elif (not leftWall):
-                    return currPoints[0]-1, currPoints[1] #move up
-                else: 
-                    return currPoints[0], currPoints[1]-1 #move left
-            else: #goal right
-                if(not rightWall):
-                    return currPoints[0], currPoints[1]-1 #move left
-                elif (not leftWall):
-                    return currPoints[0]-1, currPoints[1] #move up
-                else: 
-                    return currPoints[0], currPoints[1]+1 #move right
-        ############################################################### 
-        else:  #top wall
-            if(deltaX>0): #goal left
-                if(not leftWall): 
-                    return currPoints[0], currPoints[1]+1 #move right
-                elif (not leftWall):
-                    return currPoints[0]+1, currPoints[1] #move down
-                else: 
-                    return currPoints[0], currPoints[1]-1 #move left
-            else: #goal right
-                if(not rightWall):
-                    return currPoints[0], currPoints[1]-1 #move left
-                elif (not leftWall):
-                    return currPoints[0]+1, currPoints[1] #move down
-                else: 
-                    return currPoints[0], currPoints[1]+1 #move right
+
     </pre></code>
     Wall following is very naive: it first calculates where the walls are in relation to the current position, knowing the direction the robot would ideally like to move in, and picks the next best option. For instance, if the robot would like to move left, but moving down would also help get closer to the goal, it moves in that direction. This algorithm deprioritizes but still allows for moving away from the goal if that is the only option. Below are several examples of the algorithm working. I did not originally have a large obstacle that would obstruct many paths, so I later added a false obstacle to ensure the wall following was working as intended. 
         <br>
@@ -189,7 +142,7 @@
               loc.plotter.plot_point(robot.get_gt_pose()[0], robot.get_gt_pose()[1], ODOM)
     </pre></code>
 
-    As you can see in the above code, I have a move_to_next script that actually moves the simulated robot from point to point. It uses closed loop feedback to analyze where the robot is in x, y, and theta space, and moves accordingly. For instance, in a left move, the robot will turn until the angle is 180 degrees, then it will continue slowly forward until the gt position is close enough to what the next point is supposed to be.
+    As you can see in the above code, I have a move_to_next script that actually moves the simulated robot from point to point. It uses closed loop feedback to analyze where the robot is in x, y, and theta space, and moves accordingly. For instance, in a left move, the robot will turn until the angle is 180 degrees, then it will continue slowly forward until the gt position is close enough to what the next point is supposed to be. This is one direction; the others are very similar. 
 
     <code><pre> 
       def move_to_next(currPos, nextPos):
@@ -209,37 +162,6 @@
                 
             robot.set_vel(0,0)
             
-        elif(currPos[0]&lt;nextPos[0]): #moving right
-            print("moving right")
-            nextAng = 0;
-            robot.set_vel(0,.1)
-            while(round(robot.get_gt_pose()[2]) != nextAng): #wait till it gets to the right angle
-   
-            robot.set_vel(.1,0)
-            while(round(robot.get_gt_pose()[0], 2) != round(nextPos[0], 2)): #wait till it gets to the right distance
-           
-            robot.set_vel(0,0)
-        elif(currPos[1]&gt;nextPos[1]): #moving down
-            print("moving down")
-            nextAng = -90;
-            robot.set_vel(0,.1)
-            while(round(robot.get_gt_pose()[2]) != nextAng): #wait till it gets to the right angle
-            
-            robot.set_vel(.1,0)
-            while(round(robot.get_gt_pose()[1], 2) != round(nextPos[1], 2)): #wait till it gets to the right distance
-              
-            
-            robot.set_vel(0,0)
-        else: #moving up
-            print("moving up")
-            nextAng = 90;
-            robot.set_vel(0,.1)
-            while(round(robot.get_gt_pose()[2]) != nextAng): #wait till it gets to the right angle
-           
-            robot.set_vel(.1,0)
-            while(round(robot.get_gt_pose()[1], 2) != round(nextPos[1], 2)): #wait till it gets to the right distance
-               
-            robot.set_vel(0,0)
     </pre></code>
 
     As seen in the following videos, this code worked great and I was able to watch the robot move from point to point. Also included is an image of where the robot is moving vs where its supposed to be moving, which is very close. The robot moved very slowly, so this video is sped up 8x
@@ -320,7 +242,7 @@
           }
 
     </pre></code>
-    Then, I created the main program. It essentially does the same thing as in my sim, where it determines where (up down left or right) the next point is, and then turns the robot to face in that direction and moves till it has gone far enough to be one "block," which I started as .15m.
+    Then, I created the main program. It essentially does the same thing as in my sim, where it determines where (up down left or right) the next point is, and then turns the robot to face in that direction and moves till it has gone far enough to be one "block," which I started as .15m. Below is an example of one of the directions; it is repeated similiarly for others. 
 
 
 
@@ -328,13 +250,6 @@
 
       void moveToPoint(int i, int currX, int currY, int nextX, int nextY){
 
-
-        int   currAngle  = getYaw();
-        float startDist  = getDist();
-        float currDist   = getDist();
-        float blockDistX = 150; //how long a "block" is; will need to determine experimentally 
-        float blockDistY = 150; //how long a "block" is; will need to determine experimentally 
-        int   nextAng    = 0;
         
         if(currX&lf;nextX){ //moving left
             Serial.print("moving left");
@@ -357,60 +272,6 @@
          
             setMotors(0, 0);
             
-        }
-        else if(currX>nextX){ //moving right
-            Serial.print("moving right");
-            nextAng = 0;
-            
-            setMotors(motorSpeed, -motorSpeed);
-            while(currAngle != nextAng){
-              currAngle = getYaw();
-              } //wait till it gets to the right angle
-   
-            setMotors(motorSpeed, motorSpeed); //robot.set_vel(.1,0)
-            currDist = getDist();
-            while(currDist >= startDist - blockDistX){
-              currDist = getDist();
-              } 
-
-            setMotors(0, 0); //robot.set_vel(0,0)
-        }
-        else if(currY&lf;nextY){ //moving down
-            Serial.print("moving down");
-            nextAng = 270;
-            //robot.set_vel(0,.1)
-            setMotors(motorSpeed, -motorSpeed);
-            while(currAngle != nextAng){
-              currAngle = getYaw();
-              } //wait till it gets to the right angle
-            
-            setMotors(motorSpeed, motorSpeed); //robot.set_vel(.1,0)
-            currDist = getDist();
-            while(currDist >= startDist - blockDistY){
-              currDist = getDist();
-              } 
-            
-            //robot.set_vel(0,0)
-            setMotors(0, 0);
-        }
-        else{ //moving up
-            Serial.print("moving right");
-            nextAng = 90;
-            
-            setMotors(motorSpeed, -motorSpeed); //robot.set_vel(0,.1)
-            
-            while(currAngle != nextAng){
-              currAngle = getYaw();
-              } //wait till it gets to the right angle
-              
-            
-            setMotors(motorSpeed, motorSpeed); //robot.set_vel(.1,0)
-            currDist = getDist();
-            while(currDist >= startDist - blockDistY){
-              currDist = getDist();
-              } 
-           
-            setMotors(0, 0); // robot.set_vel(0,0)
         }
 }
 
