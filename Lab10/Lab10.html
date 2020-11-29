@@ -415,7 +415,38 @@
 }
 
     </pre></code>
+
+    <br>
+    <br>
+    I tried working with this for a while, but they gyro drfit was so bad it would just keep spinning in circles forever and getting lost because it didn't know its true angle. 
+    Therefore, I switched to an open loop configuration. I used a similar method to see if the robot was moving up, down, left, or right. Then, I did a simple check to see where it was, and where it needed to be. 
+    I did this by keeping track of the "angle" in terms of a 0, 1, 2, or 3 meaning right, up, left, or down. Then, when determining where to go next, i would use this known quanitity and the direction I was moving to choose how long to rotate for. 
   
+    <code><pre>
+          setMotors(motorSpeed, 0);
+          if(dirStatus == 1) { delay(spinTime*3);} //were up, going left
+            else if(dirStatus == 2) { delay(spinTime*2);} //were right, going left
+            else if(dirStatus == 3) { delay(spinTime);} //were down, going left
+            dirStatus = 0;
+    </pre></code>
+
+    spinTime was a variable that I tuned to be approximately a 90 degree turn. In order to get my robot to turn properly, I did end up having to put masking tape on the wheels, which made it very slippery. 
+    Once this was working, which I confirmed by printing out to the command line with the  motors disengaged, I  would move the robot forward one square, again setting the motors to a constant and waiting a delay of also a constant that was empirically tested. 
+
+    <br>
+    Once I moved to real testing, I found that error would propogate the longer I tried to spin for. Therefore, instead of trying to spin 270 degrees, I simply changed the direction of the motor and spun only 90 degrees if I wanted to turn an angle that I previously would have used spinTime*3 for. 
+    <br>
+    Unfortunately, I had to move houses before I was able to test this, however, since it was fully open loop and didn't use obstacle avoidance or localization, I just needed to test in a wide open space, and it would be the same as if I was on the map itself. Here are two successful runs I did and the corresponding maps. 
+<br>
+    <video width="320" height="240" controls>
+      <source src="ard_1.mp4" type="video/mp4">
+      </video>
+
+        <img src="steps_arduino.PNG" alt="i2c1" width="320" height="240">
+        <br>
+
+
+
  
    <a href="#header"><button class="btn"><i class="fa fa-arrow-up"></i>Return to top</button></a>
    </body>
