@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Lab 11</title>
+    <style>
+      body{
+        padding: 0 80px;}
+    </style>
+</head>
+  <body>
+    <div id= "header">
+      <center><h1> Lab 11b - LQR on Inverted Pendulum on Cart</h1></center>
+    </div>
+    <div id = "navbar">
+      <a href="https://kebradford.github.io/ECE4960"><button class="btn"><i class="fa fa-home"></i> Back to Home Page</button></a>
+    </div>
+    <br>
+    <br>
+    <center><h2>Objective </h2></center>
+    <p>
+      The objective of this lab was to balance a rod on top of a cart using an LQR controller to stabilize it. This was done both with an ideal situation and trying to incorporate deadband, saturation, and noise. 
+
+    <br>
+    <br>
+    <h3>Ideal System </h3>
+    <br>
+    The first thing I tested was the ideal system. I first ran the simulation out of the box, ensuring that the dynamics worked as I expected. As I did in fact expect, the pendulum without any control quickly fell over and swung to a close. I changed the system parameters to fit my robot by adjusting the weight of the cart to around 560g, but other than that they all looked pretty good. 
+
+    <br>
+    <video width="320" height="240" controls>
+    <source src="raw_pend.mp4" type="video/mp4">
+    </video>
+    <br>
+
+    Next, I tried implementing Kr control first using the eigenvalues suggested in lecture, which worked like a charm. for my state value I took the error measurement of the desired state differenced with the current state. 
+
+    <code><pre> 
+       import control
+       dpoles = np.array([-1.1, 
+                    -1.2, 
+                    -1.3, 
+                    -1.4])
+        Kr = control.place(P.A,P.B,dpoles)
+
+        self.u = Kr*np.subtract(des_state, curr_state) 
+    </pre></code>
+    <br>
+    <video width="320" height="240" controls>
+    <source src="dipoles.mp4" type="video/mp4">
+    </video>
+    <br>
+
+    I tried a few different values to test a reasonable range. I made sure to keep the values negative, so that it would be stable. If they are too small, the control is not strong enough and the system becomes unstable. Around [-.5, -.6, -.7, -.8], it almost goes off screen indicating it is not stable, but recovers and stabilizes, but much smaller the control is not strong enough. Implementing too high of values actually produces a really interesting result where the control overreacts, and moves far quicker than the robot would actually be able to realistically move. 
+
+    <br>
+    <video width="320" height="240" controls>
+    <source src="dipole_crazy.mp4" type="video/mp4">
+    </video>
+    <br>
+
+    After toying with that, I set to setting up an LQR controller. Again, using the suggested values from lecture worked very well. 
+
+    <code><pre> 
+      Q = np.matrix([[1, 0.0, 0.0, 0.0],
+                [0.0, 1, 0.0, 0.0],
+                [0.0, 0.0, 10, 0.0],
+                [0.0, 0.0, 0.0, 100]])
+        R = np.matrix([.002])
+          #solve algebraic Ricatti equation (ARE)
+        S = scipy.linalg.solve_continuous_are(P.A, P.B, Q, R) 
+         # Solve the ricatti equation and compute the LQR gain
+        Kr = np.linalg.inv(R).dot(P.B.transpose().dot(S)) 
+        self.u = Kr*np.subtract(des_state, curr_state)
+    </pre></code>
+
+    <br>
+    <video width="320" height="240" controls>
+    <source src="LQR_init.mp4" type="video/mp4">
+    </video>
+    <br>
+
+
+    </p>
+
+   <a href="#header"><button class="btn"><i class="fa fa-arrow-up"></i>Return to top</button></a>
+   </body>
+</html>
