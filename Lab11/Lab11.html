@@ -84,7 +84,29 @@
     <source src="LQR_init.mp4" type="video/mp4">
     </video>
     <br>
+    Increasing R never causes the system to become unstable. Knowing that the actual sensors will have some kind of noise, and that the actual actuators will have both a deadband and a saturation point, we can't have the system reacting too quickly, and it also can't make that fine of adjustments. 
 
+    <h3>Unideal System: Deadband and Saturation </h3>
+
+    Next, I incorporated some of the realistic non-idealities of my system into my simulated controller. First, I implemented a saturation acceleration: I know that I cannot accelerate infinitely quickly, as noted earlier when observing the quickly reacting system. I went back to lab 3 and checked out the class consensus on max acceleration, noting that it was around 330cm/s^2. Using this and the knowledge of the mass of the cart (560g), I calcuated that u could be no larger than around 1.85 (F=MA). Therefore, I set a condition that if abs(u)>1.85, it would just have to max out at 1.85. 
+
+    <code><pre> 
+         if(newU>0): 
+
+          if(newU>1.85): self.u = np.array([1.85]) #saturation
+          else: self.u = newU #normal
+
+         else: 
+
+             if(newU<-1.85): self.u = np.array([-1.85])
+             else: self.u = newU
+
+    </pre></code>
+    This simulation ran exactly the same as before with the LQR system, without a hitch. Next, I tried implementing a deadband. This was... less successful. TBD
+
+    <h3>Unideal System: Noise </h3>
+
+    Finally, I incorporated noise into my system. For x noise, I used the accelerometer, as that was how I determined how far I had moved, and for the theta noise I used gyro noise, as that was how I determined which direction I was facing on the real robot. From lab 6 I could see that my accelerometer data had a std dev of noise around .2 m/s^2. The gyroscope was actually fairly low noise, with the drift being a much larger issue. I calculated the noise on the gyro to be around .1 deg/s based on lab 6. 
 
     </p>
 

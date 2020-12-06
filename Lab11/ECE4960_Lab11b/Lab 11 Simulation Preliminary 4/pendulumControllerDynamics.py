@@ -104,11 +104,11 @@ class pendulumCnt:
 
         # self.u = Kr*np.subtract(des_state, curr_state) 
 
-        Q = np.matrix([[1, 0.0, 0.0, 0.0],
-                [0.0, 1, 0.0, 0.0],
-                [0.0, 0.0, 10, 0.0],
-                [0.0, 0.0, 0.0, 100]])
-        R = np.matrix([.002])
+        Q = np.matrix([[.01, 0.0, 0.0, 0.0],
+                [0.0, .01, 0.0, 0.0],
+                [0.0, 0.0, .1, 0.0],
+                [0.0, 0.0, 0.0, .1]])
+        R = np.matrix([10])
 
 
         # theta_noise     = .01
@@ -134,31 +134,31 @@ class pendulumCnt:
          # Solve the ricatti equation and compute the LQR gain
         Kr = np.linalg.inv(R).dot(P.B.transpose().dot(S)) 
         self.u = Kr*np.subtract(des_state, curr_state)
-        # #newU = Kr*np.subtract(des_state, curr_state)
-        # newU = Kr*np.subtract(des_state, noisy_state) 
+        newU = Kr*np.subtract(des_state, curr_state)
+        #newU = Kr*np.subtract(des_state, noisy_state) 
 
-        # if(newU>0): 
+        if(newU>0): 
 
-        #     if(newU>1.85): self.u = np.array([1.85]) #saturation
+            if(newU>1.85): self.u = np.array([1.85]) #saturation
 
-        #     #elif(newU<0.3): self.u = np.array([0.0]) #deadband
+            if(newU<0.01): self.u = np.array([0.0]) #deadband
 
-        #     #elif(newU<0.6): self.u = np.array([0.6]) #deadband
+            #elif(newU<0.6): self.u = np.array([0.6]) #deadband
 
-        #     else: self.u = newU #normal
+            else: self.u = newU #normal
 
-        #     #self.u = newU
+            #self.u = newU
 
-        # else: 
+        else: 
 
-        #     if(newU<-1.85): self.u = np.array([-1.85])
+            if(newU<-1.85): self.u = np.array([-1.85])
 
-        #     #elif(newU>-0.1): self.u = np.array([0.0]) #deadband
+            if(newU>-0.01): self.u = np.array([0.0]) #deadband
 
-        #     #elif(newU>-.6): self.u = np.array([-0.6])
+            #elif(newU>-.6): self.u = np.array([-0.6])
 
-        #     else: self.u = newU
-        #     #self.u = newU
+            else: self.u = newU
+            #self.u = newU
         # #print(self.u)
 
 
