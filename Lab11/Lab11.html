@@ -130,11 +130,16 @@
     In addition, I tried splitting up the deadband, where anything below .3 would be set to zero and anything above would be set to .6, but that was not useful. Every time, I would get an error along the lines of "ODEintWarning: Excess work done on this call (perhaps wrong Dfun type). Run with full_output = 1 to get quantitative information.
   warnings.warn(warning_msg, ODEintWarning)" 
   <br>
-  After some back and forth on campuswire, Kirstin and Sadie pointed out that instead of comparing my signal to a square wave, I could instead compare to a sine wave, such that the controller would always have to be moving, and never crash. At first, I was trying to change zref in pendulumControllerDynamics.py, but I learned from trial, error, and Greg that it should actually be the ref and ctrl signals in runSimulation.py. After playing around with amplitude and frequency values for this sine wave, I finally got a stable, albiet dance-y, inverted pendulum with deadband. I found the graphs interesting; here are two with different values of frequency, 1 and .6 respectively 
+  After some back and forth on campuswire, Kirstin and Sadie pointed out that instead of comparing my signal to a square wave, I could instead compare to a sine wave, such that the controller would always have to be moving, and never crash. At first, I was trying to change zref in pendulumControllerDynamics.py, but I learned from trial, error, and Greg that it should actually be the ref and ctrl signals in runSimulation.py. After playing around with amplitude and frequency values for this sine wave, I finally got a stable, albiet dance-y, inverted pendulum with deadband. I found the graphs interesting; here are two with different values of frequency, 1 and .6 respectively. I increased the penalty on R a lot so it wouldn't move too much and roam off screen, as it was wont to do when the R was too low. 
 
      <code><pre> 
       ref = signalGen(amplitude=100, frequency=1, y_offset=0) 
       ctrl = pendulumCnt(param=P,zref=ref.sin)
+      Q = np.matrix([[1.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0, 0.0],
+                [0.0, 0.0, 1.00, 0.0],
+                [0.0, 0.0, 0.0, 1.000]])
+        R = np.matrix([10000])
 
     </pre></code>
 
@@ -148,7 +153,22 @@
 
     <h3>Unideal System: Noise </h3>
 
-    Finally, I incorporated noise into my system. For x noise, I used the accelerometer, as that was how I determined how far I had moved, and for the theta noise I used gyro noise, as that was how I determined which direction I was facing on the real robot. From lab 6 I could see that my accelerometer data had a std dev of noise around .2 m/s^2. The gyroscope was actually fairly low noise, with the drift being a much larger issue. I calculated the noise on the gyro to be around .1 deg/s based on lab 6. 
+    Finally, I incorporated noise into my system. For x noise, I used the accelerometer, as that was how I determined how far I had moved, and for the theta noise I used gyro noise, as that was how I determined which direction I was facing on the real robot. From lab 6 I could see that my accelerometer data had a std dev of noise around .2 m/s^2. The gyroscope was actually fairly low noise, with the drift being a much larger issue. I calculated the noise on the gyro to be around .1 deg/s based on lab 6. To implement this, I added gaussian noise with the standard deviation based on these lab 6 readings. 
+
+       <code><pre> 
+        theta_noise     = .1
+        theta_dot_noise = .1
+        x_noise         = .2
+        x_dot_noise     = .2
+
+        noise = ([[random.gauss(0, x_noise)], [random.gauss(0, x_dot_noise)], [random.gauss(0, theta_noise)], [random.gauss(0, theta_dot_noise)]])
+
+        noisy_state = np.add(curr_state, noise)
+        noisy_state[2] = self.limitTheta(noisy_state[2])
+
+        newU = Kr*np.subtract(des_state, noisy_state)
+
+       </pre></code>
 
     </p>
 
