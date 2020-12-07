@@ -67,8 +67,10 @@ class pendulumCnt:
         if not zref is None:
             self.zref=zref
         else:
-            self.reference = signalGen(amplitude=.5, frequency=0.05, y_offset=0)
-            self.zref= self.reference.square
+            #self.reference = signalGen(amplitude=.5, frequency=0.5, y_offset=0)
+            self.reference = signalGen(amplitude=500, frequency=5, y_offset=1)
+            #self.zref= self.reference.square
+            self.zref = self.reference.sine
 
     ####################################################
     #               scipy.integrate
@@ -104,29 +106,37 @@ class pendulumCnt:
 
         # self.u = Kr*np.subtract(des_state, curr_state) 
 
-        Q = np.matrix([[.01, 0.0, 0.0, 0.0],
-                [0.0, .01, 0.0, 0.0],
-                [0.0, 0.0, .1, 0.0],
-                [0.0, 0.0, 0.0, .1]])
-        R = np.matrix([10])
+        # Q = np.matrix([[1, 0.0, 0.0, 0.0],
+        #         [0.0, 1, 0.0, 0.0],
+        #         [0.0, 0.0, 10, 0.0],
+        #         [0.0, 0.0, 0.0, 100]])
+        # R = np.matrix([1000])
 
 
-        # theta_noise     = .01
-        # theta_dot_noise = .01
-        # x_noise         = .01
-        # x_dot_noise     = .01
+        theta_noise     = .01
+        theta_dot_noise = .01
+        x_noise         = .01
+        x_dot_noise     = .01
 
-        # noise = ([[random.gauss(0, x_noise)], [random.gauss(0, x_dot_noise)], [random.gauss(0, theta_noise)], [random.gauss(0, theta_dot_noise)]])
+        noise = ([[random.gauss(0, x_noise)], [random.gauss(0, x_dot_noise)], [random.gauss(0, theta_noise)], [random.gauss(0, theta_dot_noise)]])
 
-        # noisy_state = np.add(curr_state, noise)
-        # noisy_state[2] = self.limitTheta(noisy_state[2])
+        noisy_state = np.add(curr_state, noise)
+        noisy_state[2] = self.limitTheta(noisy_state[2])
 
 
-        # Q = np.matrix([[30, 0.0, 0.0, 0.0],
-        #         [0.0, 30, 0.0, 0.0],
-        #         [0.0, 0.0, 300, 0.0],
-        #         [0.0, 0.0, 0.0, 300]])
+
+        # Q = np.matrix([[1.0, 0.0, 0.0, 0.0],
+        #         [0.0, 1.0, 0.0, 0.0],
+        #         [0.0, 0.0, 1.00, 0.0],
+        #         [0.0, 0.0, 0.0, 1.000]])
         # R = np.matrix([10000])
+
+        Q = np.matrix([[1.0, 0.0, 0.0, 0.0],
+                [0.0, 10.0, 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0],
+                [0.0, 0.0, 0.0, 10.00]])
+        R = np.matrix([1000])
+        # Q = Vals.Q
         # Q = Vals.Q
         # R = Vals.R
          #solve algebraic Ricatti equation (ARE)
@@ -134,14 +144,15 @@ class pendulumCnt:
          # Solve the ricatti equation and compute the LQR gain
         Kr = np.linalg.inv(R).dot(P.B.transpose().dot(S)) 
         self.u = Kr*np.subtract(des_state, curr_state)
-        newU = Kr*np.subtract(des_state, curr_state)
-        #newU = Kr*np.subtract(des_state, noisy_state) 
+        #newU = Kr*np.subtract(des_state, curr_state)
+        newU = Kr*np.subtract(des_state, noisy_state)
+      #  print(newU) 
 
         if(newU>0): 
 
             if(newU>1.85): self.u = np.array([1.85]) #saturation
 
-            if(newU<0.01): self.u = np.array([0.0]) #deadband
+            elif(newU<0.6): self.u = 0#np.array([0.0]) #deadband
 
             #elif(newU<0.6): self.u = np.array([0.6]) #deadband
 
@@ -153,7 +164,7 @@ class pendulumCnt:
 
             if(newU<-1.85): self.u = np.array([-1.85])
 
-            if(newU>-0.01): self.u = np.array([0.0]) #deadband
+            elif(newU>-0.6): self.u = 0#np.array([0.0]) #deadband
 
             #elif(newU>-.6): self.u = np.array([-0.6])
 
