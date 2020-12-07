@@ -130,13 +130,21 @@
     In addition, I tried splitting up the deadband, where anything below .3 would be set to zero and anything above would be set to .6, but that was not useful. Every time, I would get an error along the lines of "ODEintWarning: Excess work done on this call (perhaps wrong Dfun type). Run with full_output = 1 to get quantitative information.
   warnings.warn(warning_msg, ODEintWarning)" 
   <br>
-  After some back and forth on campuswire, Kirstin and Sadie pointed out that instead of comparing my signal to a square wave, I could instead compare to a sine wave, such that the controller would always have to be moving, and never crash. At first, I was trying to change zref in pendulumControllerDynamics.py, but I learned from trial, error, and Greg that it should actually be the ref and ctrl signals in runSimulation.py. After playing around with amplitude and frequency values for this sine wave, I finally got a stable, albiet dance-y, inverted pendulum with deadband. 
+  After some back and forth on campuswire, Kirstin and Sadie pointed out that instead of comparing my signal to a square wave, I could instead compare to a sine wave, such that the controller would always have to be moving, and never crash. At first, I was trying to change zref in pendulumControllerDynamics.py, but I learned from trial, error, and Greg that it should actually be the ref and ctrl signals in runSimulation.py. After playing around with amplitude and frequency values for this sine wave, I finally got a stable, albiet dance-y, inverted pendulum with deadband. I found the graphs interesting; here are two with different values of frequency, 1 and .6 respectively 
 
      <code><pre> 
       ref = signalGen(amplitude=100, frequency=1, y_offset=0) 
       ctrl = pendulumCnt(param=P,zref=ref.sin)
 
     </pre></code>
+
+    <br>
+    <video width="320" height="240" controls>
+    <source src="wiggledeadband.mp4" type="video/mp4">
+    </video>
+    <br>
+    <img src="wigglewigglewiggle.PNG" alt="i2c1" width="320" height="600"><img src="wigglewiggle.PNG" alt="i2c1" width="320" height="600">
+    <br>
 
     <h3>Unideal System: Noise </h3>
 

@@ -125,17 +125,17 @@ class pendulumCnt:
 
 
 
-        # Q = np.matrix([[1.0, 0.0, 0.0, 0.0],
-        #         [0.0, 1.0, 0.0, 0.0],
-        #         [0.0, 0.0, 1.00, 0.0],
-        #         [0.0, 0.0, 0.0, 1.000]])
-        # R = np.matrix([10000])
-
         Q = np.matrix([[1.0, 0.0, 0.0, 0.0],
-                [0.0, 10.0, 0.0, 0.0],
-                [0.0, 0.0, 1.0, 0.0],
-                [0.0, 0.0, 0.0, 10.00]])
-        R = np.matrix([1000])
+                [0.0, 1.0, 0.0, 0.0],
+                [0.0, 0.0, 1.00, 0.0],
+                [0.0, 0.0, 0.0, 1.000]])
+        R = np.matrix([10000])
+
+        # Q = np.matrix([[1.0, 0.0, 0.0, 0.0],
+        #         [0.0, 10.0, 0.0, 0.0],
+        #         [0.0, 0.0, 1.0, 0.0],
+        #         [0.0, 0.0, 0.0, 10.00]])
+        # R = np.matrix([1000])
         # Q = Vals.Q
         # Q = Vals.Q
         # R = Vals.R
@@ -144,8 +144,8 @@ class pendulumCnt:
          # Solve the ricatti equation and compute the LQR gain
         Kr = np.linalg.inv(R).dot(P.B.transpose().dot(S)) 
         self.u = Kr*np.subtract(des_state, curr_state)
-        #newU = Kr*np.subtract(des_state, curr_state)
-        newU = Kr*np.subtract(des_state, noisy_state)
+        newU = Kr*np.subtract(des_state, curr_state)
+        #newU = Kr*np.subtract(des_state, noisy_state)
       #  print(newU) 
 
         if(newU>0): 

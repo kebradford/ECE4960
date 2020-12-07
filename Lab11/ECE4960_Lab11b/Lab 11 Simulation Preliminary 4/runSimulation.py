@@ -18,7 +18,7 @@ from signalGenerator import signalGen
 #Initialize and rename for convenience
 #ref = signalGen(amplitude=.5, frequency=0.05, y_offset=0) 
 #ref = signalGen(amplitude=100, frequency=1, y_offset=0) #use w.o noise
-ref = signalGen(amplitude=100, frequency=50, y_offset=0) 
+ref = signalGen(amplitude=100, frequency=1, y_offset=0) 
 ctrl = pendulumCnt(param=P,zref=ref.sin)
 
 plt.close('all')
