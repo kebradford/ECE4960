@@ -102,7 +102,35 @@
              else: self.u = newU
 
     </pre></code>
-    This simulation ran exactly the same as before with the LQR system, without a hitch. Next, I tried implementing a deadband. This was... less successful. TBD
+    This simulation ran exactly the same as before with the LQR system, without a hitch. Next, I tried implementing a deadband. The deadband was taken from the minimum velocity I could move the robot; with the tape on the wheels, this was around 80-90 out of 255. To translate this to a force, I multiplied this by the saturation velocity out of 255, to get a deadband force of around .6, conservatively. 
+    <br>
+    This was very difficult, and at first no matter what my Q and R, I could not seem to get a stable controller while implementing deadband. The deadband was implemented much the same as the saturation velocity, like so 
+    <br>
+
+    <code><pre> 
+        if(newU>0): 
+
+            if(newU>1.85): self.u = np.array([1.85]) #saturation
+
+            elif(newU<0.6): self.u = 0#np.array([0.0]) #deadband
+
+            else: self.u = newU #normal
+
+        else: 
+
+            if(newU<-1.85): self.u = np.array([-1.85])
+
+            elif(newU>-0.6): self.u = 0#np.array([0.0]) #deadband
+
+            else: self.u = newU
+
+    </pre></code>
+    <br>
+
+    In addition, I tried splitting up the deadband, where anything below .3 would be set to zero and anything above would be set to .6, but that was not useful. Every time, I would get an error along the lines of "ODEintWarning: Excess work done on this call (perhaps wrong Dfun type). Run with full_output = 1 to get quantitative information.
+  warnings.warn(warning_msg, ODEintWarning)" 
+  <br>
+  After some back and forth on campuswire, Kirstin and Sadie pointed out that instead of comparing my signal to a square wave, I could instead compare to a sine wave, such that the controller would always have to be moving, and never crash. 
 
     <h3>Unideal System: Noise </h3>
 
