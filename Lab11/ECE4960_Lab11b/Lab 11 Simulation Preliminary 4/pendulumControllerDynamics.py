@@ -113,10 +113,10 @@ class pendulumCnt:
         # R = np.matrix([1000])
 
 
-        theta_noise     = .01
-        theta_dot_noise = .01
-        x_noise         = .01
-        x_dot_noise     = .01
+        theta_noise     =  .1
+        theta_dot_noise = .1
+        x_noise         = 0
+        x_dot_noise     = 0
 
         noise = ([[random.gauss(0, x_noise)], [random.gauss(0, x_dot_noise)], [random.gauss(0, theta_noise)], [random.gauss(0, theta_dot_noise)]])
 
@@ -125,17 +125,17 @@ class pendulumCnt:
 
 
 
+        # Q = np.matrix([[1.0, 0.0, 0.0, 0.0],
+        #         [0.0, 1.0, 0.0, 0.0],
+        #         [0.0, 0.0, 1.00, 0.0],
+        #         [0.0, 0.0, 0.0, 1.000]])
+        # R = np.matrix([10000])
+
         Q = np.matrix([[1.0, 0.0, 0.0, 0.0],
                 [0.0, 1.0, 0.0, 0.0],
-                [0.0, 0.0, 1.00, 0.0],
-                [0.0, 0.0, 0.0, 1.000]])
-        R = np.matrix([10000])
-
-        # Q = np.matrix([[1.0, 0.0, 0.0, 0.0],
-        #         [0.0, 10.0, 0.0, 0.0],
-        #         [0.0, 0.0, 1.0, 0.0],
-        #         [0.0, 0.0, 0.0, 10.00]])
-        # R = np.matrix([1000])
+                [0.0, 0.0, 10, 0.0],
+                [0.0, 0.0, 0.0, 100]])
+        R = np.matrix([1000])
         # Q = Vals.Q
         # Q = Vals.Q
         # R = Vals.R
@@ -144,15 +144,16 @@ class pendulumCnt:
          # Solve the ricatti equation and compute the LQR gain
         Kr = np.linalg.inv(R).dot(P.B.transpose().dot(S)) 
         self.u = Kr*np.subtract(des_state, curr_state)
-        newU = Kr*np.subtract(des_state, curr_state)
-        #newU = Kr*np.subtract(des_state, noisy_state)
+        #newU = Kr*np.subtract(des_state, curr_state)
+        newU = Kr*np.subtract(des_state, noisy_state)
       #  print(newU) 
-
+        coeffFric = .05
+        deadband = coeffFric*.56*9.8; #calculate force needed to move
         if(newU>0): 
 
             if(newU>1.85): self.u = np.array([1.85]) #saturation
 
-            elif(newU<0.6): self.u = 0#np.array([0.0]) #deadband
+            elif(newU<deadband): self.u = 0#np.array([0.0]) #deadband
 
             #elif(newU<0.6): self.u = np.array([0.6]) #deadband
 
@@ -164,7 +165,7 @@ class pendulumCnt:
 
             if(newU<-1.85): self.u = np.array([-1.85])
 
-            elif(newU>-0.6): self.u = 0#np.array([0.0]) #deadband
+            elif(newU>-deadband): self.u = 0#np.array([0.0]) #deadband
 
             #elif(newU>-.6): self.u = np.array([-0.6])
 

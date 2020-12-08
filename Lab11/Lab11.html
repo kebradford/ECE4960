@@ -130,7 +130,7 @@
     In addition, I tried splitting up the deadband, where anything below .3 would be set to zero and anything above would be set to .6, but that was not useful. Every time, I would get an error along the lines of "ODEintWarning: Excess work done on this call (perhaps wrong Dfun type). Run with full_output = 1 to get quantitative information.
   warnings.warn(warning_msg, ODEintWarning)" 
   <br>
-  After some back and forth on campuswire, Kirstin and Sadie pointed out that instead of comparing my signal to a square wave, I could instead compare to a sine wave, such that the controller would always have to be moving, and never crash. At first, I was trying to change zref in pendulumControllerDynamics.py, but I learned from trial, error, and Greg that it should actually be the ref and ctrl signals in runSimulation.py. After playing around with amplitude and frequency values for this sine wave, I finally got a stable, albiet dance-y, inverted pendulum with deadband. I found the graphs interesting; here are two with different values of frequency, 1 and .6 respectively. I increased the penalty on R a lot so it wouldn't move too much and roam off screen, as it was wont to do when the R was too low. 
+  After some back and forth on campuswire, Kirstin and Sadie pointed out that instead of comparing my signal to a square wave, I could instead compare to a sine wave, such that the controller would always have to be moving, and never crash. At first, I was trying to change zref in pendulumControllerDynamics.py, but I learned from trial, error, and Greg that it should actually be the ref and ctrl signals in runSimulation.py. After playing around with amplitude and frequency values for this sine wave, I finally got a stable, albiet dance-y, inverted pendulum with deadband. Increasing the frequency and amplitude helped to consistently change the value it was being compared to, which made it not as stationary, which is what was causing errors. I found the graphs interesting; here are two with different values of frequency, 1 and .6 respectively. I increased the penalty on R a lot so it wouldn't move too much and roam off screen, as it was wont to do when the R was too low. 
 
      <code><pre> 
       ref = signalGen(amplitude=100, frequency=1, y_offset=0) 
@@ -169,6 +169,16 @@
         newU = Kr*np.subtract(des_state, noisy_state)
 
        </pre></code>
+
+       I was getting many errors of the type "ODEintWarning: Repeated convergence failures (perhaps bad Jacobian or tolerances). Run with full_output = 1 to get quantitative information."
+       <br>
+       Following Sadie's suggestion on campus wire, I turned down my deadband to a less conservative value and tried only applying noise to one variable, theta or x, rather than both. Unfortunately, this still would not run for more than 10 seconds without failing with the same errors as listed above. They happened mostly when the pendulum slowed down too much, so I tried penalizing x less, but that did not help enough. 
+       <br>
+       There were similar results when parameters were changed. I may have been able to retune the system to work better with retuned parameters; for instance, saturation velocity will change as the battery dies on the robot. However, with things like noise, if the noise is increased, which would likely happen if the motors were running, I can imagine the control would be even worse than it already is, which was confirmed by turning the noise higher and observing that the simulation failed even faster. 
+       <br>
+       Some factors that cause the simulation to fail likely involve the robot moving too slowly, and therefore falling into the deadband too fast and cutting immediately from a high motion value to static, which would cause a discontinuity. Also, if there is too high a penalty on motion or movement of the pendulum, in x or in theta, the robot may be stuck between moving slowly and letting the pendulum fall, whereas if it is set too low, it tends to spin wildly in circles and wheel right off screen. 
+       
+       <br>
 
     </p>
 
