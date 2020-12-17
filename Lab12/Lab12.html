@@ -28,41 +28,54 @@
     <br>
     <br>
     <h2>Ideal System </h2>
-    First, I ran the code out of the box. It didn't slow to a halt like the previous week's code, but it was fairly stable 
+                          First, I ran the code out of the box. It didn't slow to a halt like the previous week's code, but it was fairly stable 
 
-    <br>
-    <img src="initial_code.PNG" alt="i2c1" width="320" height="600">
-    <br>
-    <br>
-    <b>We calculate new A and B matrices for use with the Kalman Filter, why is this?</b>
-    The new Kalman filter uses new A and B matrics compared to last week's code because the Kalman filter discretizes the system as opposed to last week, which was based on continuous time.  
-    <b>What state(s) are we measuring directly, and which states are we estimating</b>
-    In the previous week we were measuring all, with a C matrix of 
-    <code>
-      <pre>
-      C = np.matrix([[1.0, 0.0, 0.0, 0.0],
-               [0.0, 1.0, 0.0, 0.0],
-               [0.0, 0.0, 1.0, 0.0],
-               [0.0, 0.0, 0.0, 1.0]]) 
-             </pre>
-    </code>
-    whereas this week the C matrix is only 
-<code>
-  <pre>
-    #Measure one state only
-C = np.matrix([[0.0, 0.0, 0.0, 1.0]]) 
-</pre>
-</code>
-Indicating that the only state being measured is the fourth, which is theta dot in this code. 
-<br>
-Using the function print(control.obsv(P.A,P.C)) I see that the matrix is
-<br>
-    <img src="obsCA.PNG" alt="i2c1" width="320" height="600">
-    <br> 
-    I think that because the first row has no value in the first columm, the x state is not observable. However, we already knew fromm the C matrix that only theta dot is being observed, and the rest are being estimated. it is only important that the theta dot in this matrix is observable, which it is. 
+                          <br>
+                          <img src="initial_code.PNG" alt="i2c1" width="320" height="600">
+                          <br>
+                          <br>
+                          <b>We calculate new A and B matrices for use with the Kalman Filter, why is this?</b>
+                          The new Kalman filter uses new A and B matrics compared to last week's code because the Kalman filter discretizes the system as opposed to last week, which was based on continuous time.  
+                          <b>What state(s) are we measuring directly, and which states are we estimating</b>
+                          In the previous week we were measuring all, with a C matrix of 
+                          <code>
+                            <pre>
+                            C = np.matrix([[1.0, 0.0, 0.0, 0.0],
+                                     [0.0, 1.0, 0.0, 0.0],
+                                     [0.0, 0.0, 1.0, 0.0],
+                                     [0.0, 0.0, 0.0, 1.0]]) 
+                                   </pre>
+                          </code>
+                          whereas this week the C matrix is only 
+                      <code>
+                        <pre>
+                          #Measure one state only
+                      C = np.matrix([[0.0, 0.0, 0.0, 1.0]]) 
+                      </pre>
+                      </code>
+                      Indicating that the only state being measured is the fourth, which is theta dot in this code. 
+                      <br>
+                      Using the function print(control.obsv(P.A,P.C)) I see that the matrix is
+                      <br>
+                      <img src="obsCA.PNG" alt="i2c1" width="320" height="600">
+                      <br> 
+                      I think that because the first row has no value in the first columm, the x state is not observable. However, we already knew fromm the C matrix that only theta dot is being observed, and the rest are being estimated. it is only important that the theta dot in this matrix is observable, which it is. 
 
 
     <h2>Adding Noise</h2>
+                      <br>
+                      First to simulate process noise in the Kalman filter, I commented out the line 
+                      <code>
+                      <pre>
+                        #with process noise:
+                         dydt = [ydot0 + np.random.randn()*0.01, ydot1 + np.random.randn()*0.01, ydot2 + np.random.randn()*0.01, ydot3 + np.random.randn()*0.01]
+                    </pre>
+                    </code>
+                    The Kalman filter still worked, though slightly less smoothly 
+                    <br>
+                      <img src="processnoise.PNG" alt="i2c1" width="320" height="600">
+                      <br> 
+
 
     <h2>Changing the Initial State</h2>
     <h2>Saturation and Deadband</h2>
