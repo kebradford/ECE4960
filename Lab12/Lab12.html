@@ -34,10 +34,10 @@
                           <img src="initial_code.PNG" alt="i2c1" width="320" height="320">
                           <br>
                           <br>
-                          <b>We calculate new A and B matrices for use with the Kalman Filter, why is this?</b>
-                          The new Kalman filter uses new A and B matrics compared to last week's code because the Kalman filter discretizes the system as opposed to last week, which was based on continuous time.  
-                          <b>What state(s) are we measuring directly, and which states are we estimating</b>
-                          In the previous week we were measuring all, with a C matrix of 
+                          <b>We calculate new A and B matrices for use with the Kalman Filter, why is this?</b><br>
+                          The new Kalman filter uses new A and B matrics compared to last week's code because the Kalman filter discretizes the system as opposed to last week, which was based on continuous time. <br> 
+                          <b>What state(s) are we measuring directly, and which states are we estimating</b><br>
+                          In the previous week we were measuring all, with a C matrix of <br>
                           <code>
                             <pre>
                             C = np.matrix([[1.0, 0.0, 0.0, 0.0],
@@ -57,7 +57,7 @@
                       <br>
                       Using the function print(control.obsv(P.A,P.C)) I see that the matrix is
                       <br>
-                      <img src="obsCA.PNG" alt="i2c1" width="320" height="240">
+                      <img src="obsCA.PNG" alt="i2c1" width="320" height="150">
                       <br> 
                       I think that because the first row has no value in the first columm, the x state is not observable. However, we already knew fromm the C matrix that only theta dot is being observed, and the rest are being estimated. it is only important that the theta dot in this matrix is observable, which it is. 
 
@@ -79,9 +79,11 @@
                       <br>
                       <img src="measurementnoise.PNG" alt="i2c1" width="320" height="320">
                       <br> 
+                      I used the same level of noise as in the process noise, and it added what looked like a decent amount of noise after looking at the plot. Much more would be difficult to tell the signal over the noise, and much less wouldnt have much impact. 
 
 
     <h2>Changing the Initial State</h2>
+    Next, I worked on 
     <h2>Saturation and Deadband</h2>
     <h2>AB Matrix Adjustments</h2>
     <h2>Decreasing Update Time</h2>
