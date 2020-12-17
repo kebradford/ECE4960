@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Lab 11</title>
+    <style>
+      body{
+        padding: 0 80px;}
+    </style>
+</head>
+  <body>
+    <div id= "header">
+      <center><h1> Lab 11b - LQR on Inverted Pendulum on Cart</h1></center>
+    </div>
+    <div id = "navbar">
+      <a href="https://kebradford.github.io/ECE4960"><button class="btn"><i class="fa fa-home"></i> Back to Home Page</button></a>
+    </div>
+    <br>
+    <br>
+    <center><h2>Objective </h2></center>
+    <p>
+    The objective of this lab is to finish up control by implementing a Kalman Filter in the simulated inverted pendulum. 
+    <br>
+    <br>
+    <h2>Ideal System </h2>
+    First, I ran the code out of the box. It didn't slow to a halt like the previous week's code, but it was fairly stable 
+
+    <br>
+    <img src="initial_code.PNG" alt="i2c1" width="320" height="600">
+    <br>
+    <br>
+    <b>We calculate new A and B matrices for use with the Kalman Filter, why is this?</b>
+    The new Kalman filter uses new A and B matrics compared to last week's code because the Kalman filter discretizes the system as opposed to last week, which was based on continuous time.  
+    <b>What state(s) are we measuring directly, and which states are we estimating</b>
+    In the previous week we were measuring all, with a C matrix of 
+    <code>
+      C = np.matrix([[1.0, 0.0, 0.0, 0.0],
+               [0.0, 1.0, 0.0, 0.0],
+               [0.0, 0.0, 1.0, 0.0],
+               [0.0, 0.0, 0.0, 1.0]]) 
+    </code>
+    whereas this week the C matrix is only 
+<code>
+    #Measure one state only
+C = np.matrix([[0.0, 0.0, 0.0, 1.0]]) 
+</code>
+
+    <h2>Adding Noise</h2>
+
+    <h2>Changing the Initial State</h2>
+    <h2>Saturation and Deadband</h2>
+    <h2>AB Matrix Adjustments</h2>
+    <h2>Decreasing Update Time</h2>
+    <h2>Conclusions</h2>
+
+
+    </p>
+
+   <a href="#header"><button class="btn"><i class="fa fa-arrow-up"></i>Return to top</button></a>
+   </body>
+</html>
