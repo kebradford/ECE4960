@@ -12,7 +12,7 @@ m2 = .475   # Mass of the cart [kg]
 ell = 1.21  # Length of the rod [m]
 g = -9.81   # Gravity, [m/s^2]
 b = 0.78   # Damping coefficient [Ns]
-T_update = 0.001 # Controller and Estimator update rate [s]
+T_update = 0.1 # Controller and Estimator update rate [s]
 
 #parameters for animation
 w = 0.15      # Width of the cart [m]

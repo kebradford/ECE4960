@@ -17,7 +17,7 @@ from signalGenerator import signalGen
 
 #Compute controller
 dpoles = np.array([-1.1,-1.2,-1.3,-1.4])
-Kr = control.place(P.A*1.5,P.B*1.5,dpoles)
+Kr = control.place(P.A*1.1,P.B*1.1,dpoles)
 
 #Initialize and rename for convenience
 ref = signalGen(amplitude=.5, frequency=0.05, y_offset=0) 
