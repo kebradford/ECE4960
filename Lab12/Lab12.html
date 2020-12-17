@@ -7,7 +7,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>Lab 11</title>
+    <title>Lab 12</title>
     <style>
       body{
         padding: 0 80px;}
@@ -15,7 +15,7 @@
 </head>
   <body>
     <div id= "header">
-      <center><h1> Lab 11b - LQR on Inverted Pendulum on Cart</h1></center>
+      <center><h1> Lab 12b - Kalman Filter on Inverted Pendulum on Cart</h1></center>
     </div>
     <div id = "navbar">
       <a href="https://kebradford.github.io/ECE4960"><button class="btn"><i class="fa fa-home"></i> Back to Home Page</button></a>
@@ -31,7 +31,7 @@
                           First, I ran the code out of the box. It didn't slow to a halt like the previous week's code, but it was fairly stable 
 
                           <br>
-                          <img src="initial_code.PNG" alt="i2c1" width="320" height="600">
+                          <img src="initial_code.PNG" alt="i2c1" width="320" height="320">
                           <br>
                           <br>
                           <b>We calculate new A and B matrices for use with the Kalman Filter, why is this?</b>
@@ -57,7 +57,7 @@
                       <br>
                       Using the function print(control.obsv(P.A,P.C)) I see that the matrix is
                       <br>
-                      <img src="obsCA.PNG" alt="i2c1" width="320" height="600">
+                      <img src="obsCA.PNG" alt="i2c1" width="320" height="240">
                       <br> 
                       I think that because the first row has no value in the first columm, the x state is not observable. However, we already knew fromm the C matrix that only theta dot is being observed, and the rest are being estimated. it is only important that the theta dot in this matrix is observable, which it is. 
 
@@ -73,7 +73,7 @@
                     </code>
                     The Kalman filter still worked, though slightly less smoothly 
                     <br>
-                      <img src="processnoise.PNG" alt="i2c1" width="320" height="600">
+                      <img src="processnoise.PNG" alt="i2c1" width="320" height="320">
                       <br> 
 
 
