@@ -46,6 +46,7 @@ A = np.matrix([[0.0, 1.0, 0.0, 0.0],
 
 B = np.array([[0.0], [1.0/m2], [0.0], [1.0/(m2*ell)]])
 
+
 #Measure everything
 #C = np.matrix([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]]) 
 #Measure one state only

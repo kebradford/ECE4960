@@ -94,7 +94,55 @@
 
 
     <h2>Saturation and Deadband</h2>
+                    Next, I again added in saturation and deadband as we did in the previous week's lab. Again I went into the loop and found u=-Kr.dot(mu-des_state). I added the same limitations as last week, with a deadband of .275 and a saturation of 1.85
+                    <code>
+                      <pre>
+
+                        u=-Kr.dot(mu-des_state)
+        
+                        if(u>0): 
+                            if(u>1.85): 
+                                u = 1.85 
+                            elif(u<.275): 
+                                u = 0 #deadband
+
+                        else: 
+
+                            if(u<-1.85): 
+                                u = -1.85 
+                            elif(u>-.275): 
+                               u = 0 #deadband
+                      
+                    </pre>
+                    </code>
+                    <br>
+                        <img src="DED.PNG" alt="i2c1" width="320" height="320">
+                    <br> 
+                    To my great relief the kalman filter also did not struggle with this, and kept on just fine. 
+
+
     <h2>AB Matrix Adjustments</h2>
+
+                I next worked on "fudging the numbers" for the A and B matrices. 
+
+                      <code>
+                      <pre>
+                      A = np.matrix([[0.0, 1.0, 0.0, 0.0],
+                          [0.0, -b/m2, -m1*g/m2, 0.0],
+                          [0.0, 0.0, 0.0, 1.0],
+                          [0.0, -b/(m2*ell), -(m1+m2)*g/(m2*ell), 0.0]])
+
+              B = np.array([[0.0], [1.0/m2], [0.0], [1.0/(m2*ell)]])
+                    </pre>
+                    </code>
+
+                  I increased the matrix by .01 to start with, just as I did with noise and others. That worked fine, so I increased to .1, which also worked. Eventually, pushing it to .5 caused it to slowly drift off screeen, although apparently still be stable<code>Kr = control.place(P.A*1.5,P.B*1.5,dpoles)</code> Below are the (left) .1 increase and (right) .5 increase
+
+                  <br>
+                        <img src="ABpoint1.PNG" alt="i2c1" width="320" height="320"><img src="ABpoint5.PNG" alt="i2c1" width="320" height="320">
+                    <br> 
+
+
     <h2>Decreasing Update Time</h2>
     <h2>Conclusions</h2>
 

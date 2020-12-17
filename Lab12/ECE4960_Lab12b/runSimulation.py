@@ -17,7 +17,7 @@ from signalGenerator import signalGen
 
 #Compute controller
 dpoles = np.array([-1.1,-1.2,-1.3,-1.4])
-Kr = control.place(P.A,P.B,dpoles)
+Kr = control.place(P.A*1.5,P.B*1.5,dpoles)
 
 #Initialize and rename for convenience
 ref = signalGen(amplitude=.5, frequency=0.05, y_offset=0) 
@@ -42,6 +42,22 @@ for t in t_array[:-1]:
     #Update controller and sensors every <T_update> seconds
     if (t % P.T_update) < dt:
         u=-Kr.dot(mu-des_state)
+        
+        if(u>0): 
+            if(u>1.85): 
+                u = 1.85 
+            elif(u<.275): 
+                u = 0 #deadband
+
+        else: 
+
+            if(u<-1.85): 
+                u = -1.85 
+            elif(u>-.275): 
+                u = 0 #deadband
+
+
+
         y_kf = P.C.dot(old_state) + np.random.randn()*0.01;
         mu,sigma = kalmanFilter(mu,sigma,u,y_kf)
     
