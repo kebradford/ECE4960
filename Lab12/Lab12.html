@@ -83,7 +83,16 @@
 
 
     <h2>Changing the Initial State</h2>
-    Next, I worked on 
+                        Next, I worked on changing the initial measurements to see if that would throw the filter off. This time I did need to change the value outside the loop, as I was only trying to change the initial condition and not give consistent error for each state of the pendulum running.  I again started with the level of noise, which didnt do a heck of a lot (.01) <code>mu = np.array([[P.z0+.01], [P.zdot0+.01], [P.theta0+.01], [P.thetadot0+.01]])</code>. Next, I pumped it up by a factor of 10 to see what would happen, adding .1 to each state. 
+                        <br>
+                        <img src="initpoint1.PNG" alt="i2c1" width="320" height="320">
+                         <br> 
+                         Then, I bumped it up to .5, and that was a real struggle to balance again,  but it was able to measure that. That seems a little bit overly high, as the entire range of x is only -2 to +2, so its good to know the filter will still work with such bad initial conditions. 
+                         <br>
+                        <img src="initpoint5.PNG" alt="i2c1" width="320" height="320">
+                         <br> 
+
+
     <h2>Saturation and Deadband</h2>
     <h2>AB Matrix Adjustments</h2>
     <h2>Decreasing Update Time</h2>

@@ -25,7 +25,7 @@ pendulum = Pendulum(param=P)
 
 states = [np.array([[P.z0], [P.zdot0], [P.theta0], [P.thetadot0]])]
 states_est = [states[0]]
-mu = np.array([[P.z0], [P.zdot0], [P.theta0], [P.thetadot0]])
+mu = np.array([[P.z0+.1], [P.zdot0+.1], [P.theta0+.1], [P.thetadot0+.1]])
 sigma = np.eye(4)*0.00001
 #sigma = np.eye(4)*0.1
 u=0
