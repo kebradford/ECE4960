@@ -39,15 +39,19 @@
     <b>What state(s) are we measuring directly, and which states are we estimating</b>
     In the previous week we were measuring all, with a C matrix of 
     <code>
+      <pre>
       C = np.matrix([[1.0, 0.0, 0.0, 0.0],
                [0.0, 1.0, 0.0, 0.0],
                [0.0, 0.0, 1.0, 0.0],
                [0.0, 0.0, 0.0, 1.0]]) 
+             </pre>
     </code>
     whereas this week the C matrix is only 
 <code>
+  <pre>
     #Measure one state only
 C = np.matrix([[0.0, 0.0, 0.0, 1.0]]) 
+</pre>
 </code>
 Indicating that the only state being measured is the fourth, which is theta dot in this code. 
 <br>
