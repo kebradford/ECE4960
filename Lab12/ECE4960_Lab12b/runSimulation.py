@@ -46,14 +46,14 @@ for t in t_array[:-1]:
         if(u>0): 
             if(u>1.85): 
                 u = 1.85 
-            elif(u<.275): 
+            elif(u<.4): 
                 u = 0 #deadband
 
         else: 
 
             if(u<-1.85): 
                 u = -1.85 
-            elif(u>-.275): 
+            elif(u>-.4): 
                 u = 0 #deadband
 
 

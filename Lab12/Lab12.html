@@ -153,8 +153,20 @@
                   <br>
                       <img src="Tupdate005.PNG" alt="i2c1" width="320" height="320">
                   <br> 
-    <h2>Conclusions</h2>
+                  I again increased to .1, and that caused the pendulum to become unstable. This is not all that surprising, as ten updates a second is nothing in terms of control needs. Also, our artemis would be more than capable of 20 times a second. 
+    <h2>More checks</h2>
+    Now that I had confirmed the filter works with my robots parameters, I decided to see how far I could push the simulation by exaggerating known parameters. I started with deadband, incrasing it to almost double because I know the wheels can stick sometimes. 
+    <br>
+                      <img src="dedpoint5.PNG" alt="i2c1" width="320" height="320">
+                  <br> 
 
+                  The deadband actually worked up until around a deadband of u=1, which is pretty crazy and way better than last week's method. 
+                  <br>
+                      <img src="chaos.PNG" alt="i2c1" width="320" height="320">
+                  <br> 
+                Next, I put deadband back to a reasonable value of .4 and played with noise. I increased process noise by a factor of 10, and that still managed to stabilize the pendulum. The pendulum at this state, with all the possible variables just a little wrong, is very jittery, which is what I would expect if I were to try and put this on my real robot, but it still works. 
+    <h2>Conclusions</h2>
+    In the end, with all the changes, I was still able to make the pendulum stabilize. Although this might lead the naive reader to guess that this would work on the actual robot, I know it better than that and still don't believe it would work on the real robot, especially if Professor Peterson herself couldn't get it working. 
 
     </p>
 

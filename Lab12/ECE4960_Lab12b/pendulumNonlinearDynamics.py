@@ -59,7 +59,7 @@ class Pendulum:
 
         #with process noise:
         
-        dydt = [ydot0 + np.random.randn()*0.01, ydot1 + np.random.randn()*0.01, ydot2 + np.random.randn()*0.01, ydot3 + np.random.randn()*0.01]
+        dydt = [ydot0 + np.random.randn()*0.1, ydot1 + np.random.randn()*0.1, ydot2 + np.random.randn()*0.1, ydot3 + np.random.randn()*0.1]
 
         return dydt
 
