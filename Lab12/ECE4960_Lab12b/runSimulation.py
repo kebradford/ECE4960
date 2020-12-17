@@ -27,6 +27,7 @@ states = [np.array([[P.z0], [P.zdot0], [P.theta0], [P.thetadot0]])]
 states_est = [states[0]]
 mu = np.array([[P.z0], [P.zdot0], [P.theta0], [P.thetadot0]])
 sigma = np.eye(4)*0.00001
+#sigma = np.eye(4)*0.1
 u=0
 
 #performs very simple first order integration 
@@ -41,7 +42,7 @@ for t in t_array[:-1]:
     #Update controller and sensors every <T_update> seconds
     if (t % P.T_update) < dt:
         u=-Kr.dot(mu-des_state)
-        y_kf = P.C.dot(old_state)
+        y_kf = P.C.dot(old_state) + np.random.randn()*0.01;
         mu,sigma = kalmanFilter(mu,sigma,u,y_kf)
     
     new_state=old_state + np.array(pendulum.cartpendfunc(old_state,u)) * dt
@@ -57,7 +58,7 @@ animation = pendulumAn()
 #Recast arrays for plotting
 states = np.array(states)
 states_est = np.array(states_est)
-print(control.obsv(P.A,P.C)) 
+#print(control.obsv(P.A,P.C)) 
 
 i = 0
 reference = np.zeros((length,1))

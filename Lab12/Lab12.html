@@ -75,6 +75,10 @@
                     <br>
                       <img src="processnoise.PNG" alt="i2c1" width="320" height="320">
                       <br> 
+                      I next added in measurement noise, sigma_n. First I tried changing the line <code> sigma = np.eye(4)*0.00001 </code> in runSimulation.py, but that didnt appear to actually affect the filter. Next, I tried changing it within the loop that calculates each state, by adding an element of randomness to the y_kf value that gets passed to the kaulman filter, and that resulted in a noisier output. 
+                      <br>
+                      <img src="measurementnoise.PNG" alt="i2c1" width="320" height="320">
+                      <br> 
 
 
     <h2>Changing the Initial State</h2>
